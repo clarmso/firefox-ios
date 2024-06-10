@@ -47,9 +47,9 @@ jobs:
                 # This data can be any valid JSON from a previous step in the GitHub Action
                 payload: |
                   {
-                    "test_plan": "smoke"
-                    "xcode_version": xcode_version
-                    "ios_simulator": ios_simulator
+                    "test_plan": "smoke",
+                    "xcode_version": xcode_version,
+                    "ios_simulator": ios_simulator,
                     "ios_version": ios_version
                   }
               env:
