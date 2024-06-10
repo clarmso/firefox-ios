@@ -48,9 +48,9 @@ jobs:
                 payload: |
                   {
                     "test_plan": "smoke",
-                    "xcode_version": ${{ env.xcode_version }},
-                    "ios_simulator": ${{ env.ios_simulator }},
-                    "ios_version": ${{ env.ios_version }}
+                    "xcode_version": "${{ env.xcode_version }}",
+                    "ios_simulator": "${{ env.ios_simulator }}",
+                    "ios_version": "${{ env.ios_version }}"
                   }
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
