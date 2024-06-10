@@ -3,15 +3,18 @@ name: "Focus Smoke Tests"
     
 on:
     workflow_dispatch:
+
+strategy:
+    matrix:
+        ios_simulator: ["iPhone 15", "iPad Pro 13-inch (M4)"]
     
 env:
     xcode_version: 15.4
-    ios_simulator: iPhone 15
     ios_version: 17.4
     
 jobs:
-    compile:
-        name: Compile source code
+    run-tests:
+        name: Compile source code and run tests
         runs-on: macos-14
         steps:
             - name: Check out source code
@@ -33,11 +36,11 @@ jobs:
             - name: Compile!
               run: |
                 xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
-                xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}'
+                xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}'
               working-directory: focus-ios
             - name: Run smoke tests
               run: |
-                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan SmokeTest -only-testing:XCUITest/CopyPasteTest
+                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}' -testPlan SmokeTest -only-testing:XCUITest/CopyPasteTest
               working-directory: focus-ios
               continue-on-error: true
             - name: Report to Slack
@@ -48,9 +51,9 @@ jobs:
                 payload: |
                   {
                     "test_plan": "smoke",
-                    "xcode_version": xcode_version,
-                    "ios_simulator": ios_simulator,
-                    "ios_version": ios_version
+                    "xcode_version": env.xcode_version,
+                    "ios_simulator": matrix.ios_simulator,
+                    "ios_version": env.ios_version
                   }
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
