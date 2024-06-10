@@ -39,3 +39,16 @@ jobs:
               run: |
                 xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan SmokeTest
               working-directory: focus-ios
+              continue-on-error: true
+            - name: Report to Slack
+              id: slack
+              uses: slackapi/slack-github-action@v1.26.0
+              with:
+                # This data can be any valid JSON from a previous step in the GitHub Action
+                payload: |
+                  {
+                    "key": "value",
+                    "foo": "bar"
+                  }
+              env:
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
