@@ -4,16 +4,15 @@ name: "Focus Smoke Tests"
 on:
     workflow_dispatch:
 
-strategy:
-    matrix:
-        ios_simulator: ["iPhone 15", "iPad Pro 13-inch (M4)"]
-    
 env:
     xcode_version: 15.4
     ios_version: 17.4
     
 jobs:
     run-tests:
+        strategy:
+            matrix:
+                ios_simulator: ["iPhone 15", "iPad Pro 13-inch (M4)"]
         name: Compile source code and run tests
         runs-on: macos-14
         steps:
