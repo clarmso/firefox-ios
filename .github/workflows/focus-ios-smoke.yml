@@ -6,12 +6,11 @@ on:
     
 env:
     XCODE_VERSION: 15.4
-    RUNNER: macos-14
     
 jobs:
     compile:
         name: Compile source code
-        runs-on: env.RUNNER
+        runs-on: macos-14
         steps:
           - name: Check out source code
             uses: actions/checkout@v4
