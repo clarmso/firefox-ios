@@ -51,7 +51,7 @@ jobs:
               uses: google-github-actions/upload-cloud-storage@v2
               with:
                path: 'focus-ios/result.txt'
-               destination: 'mobile-reports/public/focus-ios/smoke/result_${{ github.run_number }}'
+               destination: 'mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}'
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
@@ -63,7 +63,7 @@ jobs:
                     "ios_simulator": "${{ env.ios_simulator }}",
                     "ios_version": "${{ env.ios_version }}",
                     "test_plan": "${{ env.test_plan }}",
-                    "test_report_url": 'mobile-reports/public/focus-ios/smoke/result_${{ github.run_number }}'
+                    "test_report_url": "https://storage.googleapis.com/mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}"
                   }
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
