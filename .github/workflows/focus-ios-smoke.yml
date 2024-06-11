@@ -32,15 +32,16 @@ jobs:
                 xcrun simctl shutdown all
                 xcrun simctl erase all
                 ./checkout.sh
-            - name: Compile!
+            - name: Compile source code
               run: |
                 xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
-                # xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}'
+                xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}'
               working-directory: focus-ios
-            - name: Run ${{ env.test_plan }}
+            - name: Run tests
               run: |
-                # xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -only-testing:XCUITest/CopyPasteTest
-                echo "hello world!!" > result.txt
+                brew install xctesthtmlreport
+                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ./results -only-testing:XCUITest/CopyPasteTest
+                xchtmlreport ./results
               working-directory: focus-ios
               continue-on-error: true
             - name: Authenticate to Google Cloud
@@ -50,7 +51,7 @@ jobs:
             - name: Upload to Google Cloud bucket
               uses: google-github-actions/upload-cloud-storage@v2
               with:
-               path: 'focus-ios/result.txt'
+               path: 'focus-ios/index.html'
                destination: 'mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}'
             - name: Report to Slack
               id: slack
@@ -63,7 +64,7 @@ jobs:
                     "ios_simulator": "${{ env.ios_simulator }}",
                     "ios_version": "${{ env.ios_version }}",
                     "test_plan": "${{ env.test_plan }}",
-                    "test_report_url": "https://storage.googleapis.com/mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}"
+                    "test_report_url": "https://storage.googleapis.com/mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}/index.html"
                   }
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
