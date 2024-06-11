@@ -39,11 +39,14 @@ jobs:
               working-directory: focus-ios
             - name: Run tests
               run: |
-                brew install xctesthtmlreport
-                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ./results -only-testing:XCUITest/CopyPasteTest
-                xchtmlreport ./results
+                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ./results
               working-directory: focus-ios
               continue-on-error: true
+            - name: Prettyprint test report
+              run: |
+                brew install xctesthtmlreport
+                xchtmlreport ./results
+              working-directory: focus-ios
             - name: Authenticate to Google Cloud
               uses: google-github-actions/auth@v1.1.1
               with:
