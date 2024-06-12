@@ -33,7 +33,6 @@ jobs:
                 xcrun simctl shutdown all
                 xcrun simctl erase all
                 mkdir ${{ env.test_results_directory }}
-                mkdir ${{ env.test_results_directory }}/results
                 ./checkout.sh
             - name: Compile source code
               run: |
