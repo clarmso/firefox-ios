@@ -8,6 +8,7 @@ env:
     ios_version: 17.4
     ios_simulator: iPhone 15
     test_plan: SmokeTest
+    test_results_directory: ~/tmp/results
     
 jobs:
     run-tests:
@@ -39,13 +40,13 @@ jobs:
               working-directory: focus-ios
             - name: Run tests
               run: |
-                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ./tmp/results -only-testing:XCUITest/CopyPasteTest
+                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ${{ env.test_results_directory }} -only-testing:XCUITest/CopyPasteTest
               working-directory: focus-ios
               continue-on-error: true
             - name: Prettyprint test report
               run: |
                 brew install xctesthtmlreport
-                xchtmlreport ./tmp/results
+                xchtmlreport ${{ env.test_results_directory }}
               working-directory: focus-ios
             - name: Authenticate to Google Cloud
               uses: google-github-actions/auth@v1.1.1
@@ -55,7 +56,7 @@ jobs:
               uses: google-github-actions/upload-cloud-storage@v2
               with:
                process_gcloudignore: false
-               path: 'focus-ios/tmp/index.html'
+               path: '${{ env.test_results_directory}}/index.html'
                destination: 'mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}'
             - name: Report to Slack
               id: slack
@@ -65,7 +66,7 @@ jobs:
                 payload: |
                   {
                     "browser": "Focus",
-                    "status": "${{ github.job.status }}",
+                    "status": "${{ job.status }}",
                     "run_number": "${{ github.run_number }}",
                     "branch": "${{ github.ref_name }}",
                     "xcode_version": "${{ env.xcode_version }}",
