@@ -8,7 +8,7 @@ env:
     ios_version: 17.4
     ios_simulator: iPhone 15
     test_plan: SmokeTest
-    test_results_directory: ~/tmp/results
+    test_results_directory: /Users/runner/tmp/
     
 jobs:
     run-tests:
@@ -32,6 +32,8 @@ jobs:
                 xcodebuild -version
                 xcrun simctl shutdown all
                 xcrun simctl erase all
+                mkdir ${{ env.test_results_directory }}
+                mkdir ${{ env.test_results_directory }}/results
                 ./checkout.sh
             - name: Compile source code
               run: |
@@ -40,13 +42,13 @@ jobs:
               working-directory: focus-ios
             - name: Run tests
               run: |
-                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ${{ env.test_results_directory }} -only-testing:XCUITest/CopyPasteTest
+                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ${{ env.test_results_directory }}/results -only-testing:XCUITest/CopyPasteTest
               working-directory: focus-ios
               continue-on-error: true
             - name: Prettyprint test report
               run: |
                 brew install xctesthtmlreport
-                xchtmlreport ${{ env.test_results_directory }}
+                xchtmlreport ${{ env.test_results_directory }}/results
               working-directory: focus-ios
             - name: Authenticate to Google Cloud
               uses: google-github-actions/auth@v1.1.1
@@ -56,7 +58,7 @@ jobs:
               uses: google-github-actions/upload-cloud-storage@v2
               with:
                process_gcloudignore: false
-               path: '${{ env.test_results_directory}}/index.html'
+               path: '${{ env.test_results_directory }}/index.html'
                destination: 'mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}'
             - name: Report to Slack
               id: slack
