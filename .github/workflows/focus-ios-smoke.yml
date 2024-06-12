@@ -11,7 +11,7 @@ env:
     
 jobs:
     run-tests:
-        name: Compile source code and run tests
+        name: Build and run tests
         runs-on: macos-14
         steps:
             - name: Check out source code
@@ -64,6 +64,8 @@ jobs:
                 # This data can be any valid JSON from a previous step in the GitHub Action
                 payload: |
                   {
+                    "browser": "Focus",
+                    "status": "${{ github.job.status }}"
                     "run_number": "${{ github.run_number }}",
                     "branch": "${{ github.ref_name }}",
                     "xcode_version": "${{ env.xcode_version }}",
