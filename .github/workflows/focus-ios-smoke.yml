@@ -64,7 +64,8 @@ jobs:
                 # This data can be any valid JSON from a previous step in the GitHub Action
                 payload: |
                   {
-                    "run_number": "${{ github.run_number }}"
+                    "run_number": "${{ github.run_number }}",
+                    "branch": "${{ github.ref_name }}",
                     "xcode_version": "${{ env.xcode_version }}",
                     "ios_simulator": "${{ env.ios_simulator }}",
                     "ios_version": "${{ env.ios_version }}",
