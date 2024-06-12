@@ -70,7 +70,7 @@ jobs:
                     "ios_simulator": "${{ env.ios_simulator }}",
                     "ios_version": "${{ env.ios_version }}",
                     "test_plan": "${{ env.test_plan }}",
-                    "github_actions_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}",
+                    "github_actions_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
                     "test_report_url": "https://storage.googleapis.com/mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}/index.html"
                   }
               env:
