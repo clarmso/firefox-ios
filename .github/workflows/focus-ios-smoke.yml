@@ -65,7 +65,7 @@ jobs:
                 payload: |
                   {
                     "browser": "Focus",
-                    "status": "${{ github.job.status }}"
+                    "status": "${{ github.job.status }}",
                     "run_number": "${{ github.run_number }}",
                     "branch": "${{ github.ref_name }}",
                     "xcode_version": "${{ env.xcode_version }}",
