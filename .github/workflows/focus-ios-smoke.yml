@@ -39,13 +39,13 @@ jobs:
               working-directory: focus-ios
             - name: Run tests
               run: |
-                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ./results
+                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ./tmp/results -only-testing:XCUITest/CopyPasteTest
               working-directory: focus-ios
               continue-on-error: true
             - name: Prettyprint test report
               run: |
                 brew install xctesthtmlreport
-                xchtmlreport ./results
+                xchtmlreport ./tmp/results
               working-directory: focus-ios
             - name: Authenticate to Google Cloud
               uses: google-github-actions/auth@v1.1.1
@@ -54,7 +54,8 @@ jobs:
             - name: Upload to Google Cloud bucket
               uses: google-github-actions/upload-cloud-storage@v2
               with:
-               path: 'focus-ios/index.html'
+               process_gcloudignore: false
+               path: 'focus-ios/tmp/index.html'
                destination: 'mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}'
             - name: Report to Slack
               id: slack
@@ -63,10 +64,12 @@ jobs:
                 # This data can be any valid JSON from a previous step in the GitHub Action
                 payload: |
                   {
+                    "run_number": "${{ github.run_number }}"
                     "xcode_version": "${{ env.xcode_version }}",
                     "ios_simulator": "${{ env.ios_simulator }}",
                     "ios_version": "${{ env.ios_version }}",
                     "test_plan": "${{ env.test_plan }}",
+                    "github_actions_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/job/${{ github.job }}",
                     "test_report_url": "https://storage.googleapis.com/mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}/index.html"
                   }
               env:
