@@ -73,13 +73,19 @@ jobs:
               uses: google-github-actions/auth@v1.1.1
               with:
                 credentials_json: ${{ secrets.GCP_SA_KEY }}
-            - name: Upload to Google Cloud bucket
+            - name: Upload report to Google Cloud bucket
               id: upload-gcloud
               uses: google-github-actions/upload-cloud-storage@v2
               with:
                process_gcloudignore: false
                path: '${{ env.test_results_directory }}/index.html'
                destination: 'mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}'
+            - name: Upload xcresult file to Github
+              id: upload-github
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ env.browser }}-${{ env.test_plan }}-${{ github.run_number }}
+                path: '${{ env.test_results_directory }}/results.xcresult
             - name : Process pass/fail info
               id: pass-fail
               run: |
