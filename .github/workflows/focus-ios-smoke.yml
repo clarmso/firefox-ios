@@ -57,17 +57,19 @@ jobs:
                path: '${{ env.test_results_directory }}/index.html'
                destination: 'mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}'
             - name : Process pass/fail info
+              id: pass-fail
               run: |
                 # fail.txt is created when at least one test fails.
                 # We rely use job.status to report the test status.
                 if [ -e ${{ env.test_results_directory }}/fail.txt ]; then
-                    echo "$pass_fail='❌ Fail'" >> "$GITHUB_ENV"
-                    echo "$exit_value=1" >> "$GITHUB_ENV"
+                    echo "$pass_fail='❌ Fail'" >> "$GITHUB_OUTPUT"
+                    echo "$exit_value=1" >> "$GITHUB_OUTPUT"
                 else
-                    echo "pass_fail='✅ Pass'" >> "$GITHUB_ENV"
-                    echo "$exit_value=0" >> "$GITHUB_ENV"
+                    echo "pass_fail='✅ Pass'" >> "$GITHUB_OUTPUT"
+                    echo "$exit_value=0" >> "$GITHUB_OUTPUT"
                 fi
                 cat $GITHUB_ENV
+                cat $GITHUB_OUTPUT
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
@@ -76,7 +78,7 @@ jobs:
                 payload: |
                   {
                     "browser": "Focus",
-                    "status": "${{ pass_fail }}",
+                    "status": "${{ steps.pass-fail.outputs.pass_fail }}",
                     "run_number": "${{ github.run_number }}",
                     "branch": "${{ github.ref_name }}",
                     "xcode_version": "${{ env.xcode_version }}",
@@ -90,4 +92,4 @@ jobs:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
             - name: Report status
               run: |
-                exit "$exit_value"
+                exit ${{ steps.pass-fail.outputs.exit_value }}
