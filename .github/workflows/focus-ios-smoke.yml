@@ -84,8 +84,8 @@ jobs:
               id: upload-github
               uses: actions/upload-artifact@v4
               with:
-                name: ${{ env.browser }}-${{ env.test_plan }}-${{ github.run_number }}
-                path: '${{ env.test_results_directory }}/results.xcresult
+                name: ${{ env.browser }}-${{ env.xcodebuild_test_plan }}-${{ github.run_number }}
+                path: ${{ env.test_results_directory }}/results.xcresult
             - name : Process pass/fail info
               id: pass-fail
               run: |
