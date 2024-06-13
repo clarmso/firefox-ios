@@ -22,11 +22,13 @@ jobs:
               with:
                 python-version: '3.11'
             - name: Install packages
+              id: packages
               run: |
                 brew update
                 pip3 install virtualenv pipenv
                 brew install xctesthtmlreport
             - name: Setup Xcode
+              id: xcode
               run: |
                 sudo rm -rf /Applications/Xcode.app
                 sudo xcode-select -s /Applications/Xcode_${{ env.xcode_version }}.app/Contents/Developer
@@ -35,22 +37,27 @@ jobs:
                 xcrun simctl erase all
                 ./checkout.sh
             - name: Compile source code
+              id: compile
               run: |
                 xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
                 xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}'
               working-directory: focus-ios
             - name: Run tests
+              id: run-tests
               run: |
                 xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ${{ env.test_results_directory }}/results || touch ${{ env.test_results_directory }}/fail.txt && exit 0
               working-directory: focus-ios
             - name: Prettyprint test report
+              id: test-report
               run: |
                 xchtmlreport ${{ env.test_results_directory }}/results
             - name: Authenticate to Google Cloud
+              id: auth-gcloud
               uses: google-github-actions/auth@v1.1.1
               with:
                 credentials_json: ${{ secrets.GCP_SA_KEY }}
             - name: Upload to Google Cloud bucket
+              id: upload-gcloud
               uses: google-github-actions/upload-cloud-storage@v2
               with:
                process_gcloudignore: false
