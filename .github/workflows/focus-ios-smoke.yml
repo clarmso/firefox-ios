@@ -21,10 +21,11 @@ jobs:
               uses: actions/setup-python@v5
               with:
                 python-version: '3.11'
-            - name: Install Python packages required
+            - name: Install packages
               run: |
                 brew update
                 pip3 install virtualenv pipenv
+                brew install xctesthtmlreport
             - name: Setup Xcode
               run: |
                 sudo rm -rf /Applications/Xcode.app
@@ -32,7 +33,6 @@ jobs:
                 xcodebuild -version
                 xcrun simctl shutdown all
                 xcrun simctl erase all
-                mkdir ${{ env.test_results_directory }}
                 ./checkout.sh
             - name: Compile source code
               run: |
@@ -41,14 +41,11 @@ jobs:
               working-directory: focus-ios
             - name: Run tests
               run: |
-                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ${{ env.test_results_directory }}/results -only-testing:XCUITest/CopyPasteTest
+                xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' -testPlan ${{ env.test_plan }} -resultBundlePath ${{ env.test_results_directory }}/results || touch ${{ env.test_results_directory }}/fail.txt && exit 0
               working-directory: focus-ios
-              continue-on-error: true
             - name: Prettyprint test report
               run: |
-                brew install xctesthtmlreport
                 xchtmlreport ${{ env.test_results_directory }}/results
-              working-directory: focus-ios
             - name: Authenticate to Google Cloud
               uses: google-github-actions/auth@v1.1.1
               with:
@@ -59,6 +56,18 @@ jobs:
                process_gcloudignore: false
                path: '${{ env.test_results_directory }}/index.html'
                destination: 'mobile-reports/public/focus-ios/${{ env.test_plan }}/result_${{ github.run_number }}'
+            - name : Process pass/fail info
+              run: |
+                # fail.txt is created when at least one test fails.
+                # We rely use job.status to report the test status.
+                if [ -e ${{ env.test_results_directory }}/fail.txt ]; then
+                    echo "$pass_fail='❌ Fail'" >> "$GITHUB_ENV"
+                    echo "$exit_value=1" >> "$GITHUB_ENV"
+                else
+                    echo "pass_fail='✅ Pass'" >> "$GITHUB_ENV"
+                    echo "$exit_value=0" >> "$GITHUB_ENV"
+                fi
+                cat $GITHUB_ENV
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
@@ -67,7 +76,7 @@ jobs:
                 payload: |
                   {
                     "browser": "Focus",
-                    "status": "${{ job.status }}",
+                    "status": "${{ pass_fail }}",
                     "run_number": "${{ github.run_number }}",
                     "branch": "${{ github.ref_name }}",
                     "xcode_version": "${{ env.xcode_version }}",
@@ -79,3 +88,6 @@ jobs:
                   }
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            - name: Report status
+              run: |
+                exit "$exit_value"
