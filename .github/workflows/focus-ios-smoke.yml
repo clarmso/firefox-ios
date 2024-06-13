@@ -39,6 +39,7 @@ jobs:
                 xcrun simctl shutdown all
                 xcrun simctl erase all
                 ./checkout.sh
+                ./bootstrap.sh --force
             - name: Compile source code
               id: compile
               run: |
@@ -107,7 +108,7 @@ jobs:
                     "ios_version": "${{ env.ios_version }}",
                     "test_plan": "${{ env.xcodebuild_test_plan }}",
                     "github_actions_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                    "test_report_url": "https://storage.googleapis.com/mobile-reports/public/focus-ios/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html"
+                    "test_report_url": "https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html"
                   }
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
