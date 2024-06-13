@@ -85,12 +85,13 @@ jobs:
               uses: actions/upload-artifact@v4.3.3
               with:
                 name: ${{ env.browser }}-${{ env.xcodebuild_test_plan }}-${{ github.run_number }}
-                path: ${{ env.test_results_directory }}
+                path: ${{ env.test_results_directory }}/index.html
             - name : Process pass/fail info
               id: pass-fail
               run: |
                 # fail.txt is created when at least one test fails.
-                # We rely use job.status to report the test status.
+                # job.status can't be used because the subsequent steps are not
+                # executed once a step fails.
                 if [ -e ${{ env.test_results_directory }}/fail.txt ]; then
                     echo "pass_fail=❌ Fail" >> "$GITHUB_OUTPUT"
                     echo "exit_value=1" >> "$GITHUB_OUTPUT"
