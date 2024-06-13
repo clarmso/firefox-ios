@@ -8,7 +8,7 @@ env:
     ios_version: 17.4
     ios_simulator: iPhone 15
     test_plan: SmokeTest
-    test_results_directory: /Users/runner/tmp/
+    test_results_directory: /Users/runner/tmp
     
 jobs:
     run-tests:
@@ -75,8 +75,6 @@ jobs:
                     echo "pass_fail='✅ Pass'" >> "$GITHUB_OUTPUT"
                     echo "$exit_value='0'" >> "$GITHUB_OUTPUT"
                 fi
-                cat $GITHUB_ENV
-                cat $GITHUB_OUTPUT
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
