@@ -70,10 +70,10 @@ jobs:
                 # We rely use job.status to report the test status.
                 if [ -e ${{ env.test_results_directory }}/fail.txt ]; then
                     echo "$pass_fail='❌ Fail'" >> "$GITHUB_OUTPUT"
-                    echo "$exit_value=1" >> "$GITHUB_OUTPUT"
+                    echo "$exit_value='1'" >> "$GITHUB_OUTPUT"
                 else
                     echo "pass_fail='✅ Pass'" >> "$GITHUB_OUTPUT"
-                    echo "$exit_value=0" >> "$GITHUB_OUTPUT"
+                    echo "$exit_value='0'" >> "$GITHUB_OUTPUT"
                 fi
                 cat $GITHUB_ENV
                 cat $GITHUB_OUTPUT
