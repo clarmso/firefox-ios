@@ -6,8 +6,8 @@ on:
 env:
     browser: focus-ios
     xcode_version: 15.4
-    ios_version: 17.4
-    ios_simulator: iPhone 15
+    ios_version: 17.5
+    ios_simulator: iPad Pro (12.9-inch) (6th generation)
     xcodebuild_test_plan: SmokeTest
     xcodebuild_scheme: Focus
     xcodebuild_target: XCUITest
