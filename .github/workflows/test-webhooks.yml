@@ -16,9 +16,11 @@ jobs:
               with:
                   payload: |
                     {
-                      "browser": "Focus",
-                      "foo": "bar"
-                    }    
+                      blocks: [
+                        type: "section",
+                        text: { type: "plain_text", text: ":construction:", emoji: true }
+                      ] 
+                    } 
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
