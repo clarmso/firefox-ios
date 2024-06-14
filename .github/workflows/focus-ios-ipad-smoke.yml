@@ -1,4 +1,4 @@
-name: "Focus/Firefox Tests"
+name: "Focus iPad Smoke Tests"
     
 on:
     workflow_dispatch:
