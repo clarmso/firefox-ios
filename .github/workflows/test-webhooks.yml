@@ -1,0 +1,17 @@
+name: "Test webhooks"
+    
+on:
+    workflow_dispatch:
+
+jobs:
+    call-webhooks:
+        runs-on: macos-14
+        steps:
+            - name: Report to Slack
+              id: slack
+              uses: slackapi/slack-github-action@v1.26.0
+              with:
+                  payload: |
+                    {}          
+              env:
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_INFRA_ALERTS_WEBHOOK }}
