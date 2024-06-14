@@ -10,17 +10,18 @@ jobs:
             - name: Hello World!
               run: |
                 echo "Hello World!"
-            - name: Report to Slack
-              id: slack
-              uses: slackapi/slack-github-action@v1.26.0
-              with:
-                  payload: |
-                    {
+                echo "{
+                      browser: "focus-ios",
                       blocks: [
                         type: "section",
                         text: { type: "plain_text", text: ":construction:", emoji: true }
                       ] 
-                    } 
+                    }" > slack.json
+            - name: Report to Slack
+              id: slack
+              uses: slackapi/slack-github-action@v1.26.0
+              with:
+                payload-file-path: "./slack.json"
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
