@@ -7,17 +7,17 @@ jobs:
     call-webhooks:
         runs-on: macos-14
         steps:
+            - name: Hello World!
+              run: |
+                echo "Hello World!"
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
               with:
                   payload: |
                     {
-                      blocks: [
-                        {
-                          type: "divider"
-                        }
-                      ]
+                      "browser": "Focus",
+                      "foo": "bar"
                     }    
               env:
-                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_INFRA_ALERTS_WEBHOOK }}
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
