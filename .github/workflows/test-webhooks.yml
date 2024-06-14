@@ -10,13 +10,7 @@ jobs:
             - name: Hello World!
               run: |
                 echo "Hello World!"
-                echo "{
-                      browser: "focus-ios",
-                      blocks: [
-                        type: "section",
-                        text: { type: "plain_text", text: ":construction:", emoji: true }
-                      ] 
-                    }" > slack.json
+                jq -n --arg browser 'focus-ios' --arg two 'Banana' '$ARGS.named' > slack.json
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
