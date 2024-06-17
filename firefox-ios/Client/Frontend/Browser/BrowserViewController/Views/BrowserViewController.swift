@@ -541,7 +541,7 @@ class BrowserViewController: UIViewController,
         if NightModeHelper.isActivated(),
            !featureFlags.isFeatureEnabled(.nightMode, checking: .buildOnly) {
             NightModeHelper.turnOff()
-            themeManager.reloadTheme(for: windowUUID)
+            themeManager.applyThemeUpdatesToWindows()
         }
 
         NightModeHelper.cleanNightModeDefaults()
@@ -1007,8 +1007,9 @@ class BrowserViewController: UIViewController,
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+        updateToolbarStateForTraitCollection(traitCollection)
         if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            themeManager.systemThemeChanged()
+            themeManager.applyThemeUpdatesToWindows()
         }
         setupMiddleButtonStatus(isLoading: false)
     }
@@ -1298,7 +1299,7 @@ class BrowserViewController: UIViewController,
             })
         }
 
-        microsurvey.applyTheme(theme: themeManager.currentTheme(for: windowUUID))
+        microsurvey.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
 
         updateViewConstraints()
     }
@@ -1790,14 +1791,19 @@ class BrowserViewController: UIViewController,
     private func executeToolbarActions() {
         guard isToolbarRefactorEnabled, let state = browserViewControllerState else { return }
 
-        if state.navigateTo != nil {
+        switch state {
+        case _ where state.navigateTo != nil:
             handleNavigationActions(for: state)
-        } else if state.showQRcodeReader {
+        case _ where state.showQRcodeReader:
             navigationHandler?.showQRCode(delegate: self)
-        } else if state.showBackForwardList {
+        case _ where state.showBackForwardList:
             navigationHandler?.showBackForwardList()
-        } else if state.showTabsLongPressActions {
+        case _ where state.showTabsLongPressActions:
             presentActionSheet(from: view)
+        case _ where state.showTrackingProtectionDetails:
+            TelemetryWrapper.recordEvent(category: .action, method: .press, object: .trackingProtectionMenu)
+            navigationHandler?.showEnhancedTrackingProtection(sourceView: view)
+        default: break
         }
     }
 
@@ -2493,7 +2499,7 @@ class BrowserViewController: UIViewController,
     // MARK: Themeable
 
     func currentTheme() -> Theme {
-        return themeManager.currentTheme(for: windowUUID)
+        return themeManager.getCurrentTheme(for: windowUUID)
     }
 
     func applyTheme() {

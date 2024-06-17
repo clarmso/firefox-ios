@@ -81,7 +81,7 @@ class HomepageViewController:
         self.viewModel = HomepageViewModel(profile: profile,
                                            isPrivate: isPrivate,
                                            tabManager: tabManager,
-                                           theme: themeManager.currentTheme(for: tabManager.windowUUID))
+                                           theme: themeManager.getCurrentTheme(for: tabManager.windowUUID))
 
         let jumpBackInContextualViewProvider = ContextualHintViewProvider(forHintType: .jumpBackIn,
                                                                           with: viewModel.profile)
@@ -350,7 +350,7 @@ class HomepageViewController:
     }
 
     func applyTheme() {
-        let theme = themeManager.currentTheme(for: windowUUID)
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
         viewModel.theme = theme
         view.backgroundColor = theme.colors.layer1
     }
@@ -370,7 +370,7 @@ class HomepageViewController:
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         // We only handle status bar overlay alpha if there's a wallpaper applied on the homepage
         if WallpaperManager().currentWallpaper.type != .defaultWallpaper {
-            let theme = themeManager.currentTheme(for: windowUUID)
+            let theme = themeManager.getCurrentTheme(for: windowUUID)
             statusBarScrollDelegate?.scrollViewDidScroll(scrollView,
                                                          statusBarFrame: statusBarFrame,
                                                          theme: theme)
@@ -490,7 +490,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
             let headerViewModel = sectionViewModel.shouldShow ? sectionViewModel.headerViewModel : LabelButtonHeaderViewModel.emptyHeader
             // swiftlint:enable line_length
             headerView.configure(viewModel: headerViewModel,
-                                 theme: themeManager.currentTheme(for: windowUUID))
+                                 theme: themeManager.getCurrentTheme(for: windowUUID))
 
             // Jump back in header specific setup
             if sectionViewModel.sectionType == .jumpBackIn {
@@ -518,7 +518,7 @@ extension HomepageViewController: UICollectionViewDelegate, UICollectionViewData
                 }
                 self.showSiteWithURLHandler(learnMoreURL)
             }
-            footerView.applyTheme(theme: themeManager.currentTheme(for: windowUUID))
+            footerView.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
             return footerView
         }
         return reusableView
@@ -587,16 +587,16 @@ private extension HomepageViewController {
             )
         }
 
-        // Recently saved
-        viewModel.recentlySavedViewModel.headerButtonAction = { [weak self] button in
+        // Bookmarks
+        viewModel.bookmarksViewModel.headerButtonAction = { [weak self] button in
             self?.openBookmarks(button)
         }
 
-        viewModel.recentlySavedViewModel.onLongPressTileAction = { [weak self] (site, sourceView) in
+        viewModel.bookmarksViewModel.onLongPressTileAction = { [weak self] (site, sourceView) in
             self?.contextMenuHelper.presentContextMenu(
                 for: site,
                 with: sourceView,
-                sectionType: .recentlySaved
+                sectionType: .bookmarks
             )
         }
 
@@ -609,7 +609,7 @@ private extension HomepageViewController {
             self?.contextMenuHelper.presentContextMenu(
                 for: site,
                 with: sourceView,
-                sectionType: .recentlySaved
+                sectionType: .bookmarks
             )
         }
 
@@ -737,11 +737,11 @@ private extension HomepageViewController {
     func openBookmarks(_ sender: UIButton) {
         homePanelDelegate?.homePanelDidRequestToOpenLibrary(panel: .bookmarks)
 
-        if sender.accessibilityIdentifier == a11y.MoreButtons.recentlySaved {
+        if sender.accessibilityIdentifier == a11y.MoreButtons.bookmarks {
             TelemetryWrapper.recordEvent(category: .action,
                                          method: .tap,
                                          object: .firefoxHomepage,
-                                         value: .recentlySavedSectionShowAll,
+                                         value: .bookmarkSectionShowAll,
                                          extras: TelemetryWrapper.getOriginExtras(isZeroSearch: viewModel.isZeroSearch))
         }
     }
