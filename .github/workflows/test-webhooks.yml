@@ -10,18 +10,7 @@ jobs:
             - name: Hello World!
               run: |
                 echo "Hello World!"
-                echo "\
-                {\
-                  blocks: [\
-                  {\
-                    type: 'divider'\
-                  }\
-                  ]\
-                }" > slack.json
-                cat slack.json
-                #jq -n --arg type 'divider' '$ARGS.named' | \
-                #  jq -n '.blocks|=[inputs]' > slack.json
-                # jq -n --arg blocks '[]' '$ARGS.named' > slack.json
+                export ios_version="17.4"
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
