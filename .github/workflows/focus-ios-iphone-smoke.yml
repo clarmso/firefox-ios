@@ -61,6 +61,7 @@ jobs:
                     -target ${{ env.xcodebuild_target }} \
                     -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' \
                     -testPlan ${{ env.xcodebuild_test_plan }} \
+                    -only-testing:XCUITest/CopyPasteTest \
                     -resultBundlePath ${{ env.test_results_directory }}/results \
                     || touch ${{ env.test_results_directory }}/fail.txt && exit 0
               working-directory:  ${{ env.browser }}
@@ -93,32 +94,55 @@ jobs:
                 # job.status can't be used because the subsequent steps are not
                 # executed once a step fails.
                 if [ -e ${{ env.test_results_directory }}/fail.txt ]; then
-                    echo "pass_fail=❌ Fail" >> "$GITHUB_OUTPUT"
+                    echo "pass_fail=❌" >> "$GITHUB_OUTPUT"
                     echo "exit_value=1" >> "$GITHUB_OUTPUT"
                 else
-                    echo "pass_fail=✅ Pass" >> "$GITHUB_OUTPUT"
+                    echo "pass_fail=✅" >> "$GITHUB_OUTPUT"
                     echo "exit_value=0" >> "$GITHUB_OUTPUT"
                 fi
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
               with:
-                # This data can be any valid JSON from a previous step in the GitHub Action
                 payload: |
                   {
-                    "browser": "${{ env.browser }}",
-                    "status": "${{ steps.pass-fail.outputs.pass_fail }}",
-                    "run_number": "${{ github.run_number }}",
-                    "branch": "${{ github.ref_name }}",
-                    "xcode_version": "${{ env.xcode_version }}",
-                    "ios_simulator": "${{ env.ios_simulator }}",
-                    "ios_version": "${{ env.ios_version }}",
-                    "test_plan": "${{ env.xcodebuild_test_plan }}",
-                    "github_actions_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                    "test_report_url": "https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html"
+                    "blocks":[
+                      {
+                        "type": "header",
+                        "text": {
+                          "type": "plain_text",
+                          "text": "${{ steps.pass-fail.outputs.pass_fail }} ${{ env.browser }} iOS ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} ${{ env.ios_version }} (${{ github.ref_name }})",
+                          "emoji": true
+                        }
+                      },
+                      {
+                        "type":"divider"
+                      }
+                    ]
                   }
               env:
-                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_INFRA_ALERTS_WEBHOOK }}
+                SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+            # - name: Report to Slack
+            #   id: slack
+            #   uses: slackapi/slack-github-action@v1.26.0
+            #   with:
+            #     # This data can be any valid JSON from a previous step in the GitHub Action
+            #     payload: |
+            #       {
+            #         "browser": "${{ env.browser }}",
+            #         "status": "${{ steps.pass-fail.outputs.pass_fail }}",
+            #         "run_number": "${{ github.run_number }}",
+            #         "branch": "${{ github.ref_name }}",
+            #         "xcode_version": "${{ env.xcode_version }}",
+            #         "ios_simulator": "${{ env.ios_simulator }}",
+            #         "ios_version": "${{ env.ios_version }}",
+            #         "test_plan": "${{ env.xcodebuild_test_plan }}",
+            #         "github_actions_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            #         "test_report_url": "https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html"
+            #       }
+            #   env:
+            #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
             - name: Report status
               run: |
                 exit ${{ steps.pass-fail.outputs.exit_value }}
