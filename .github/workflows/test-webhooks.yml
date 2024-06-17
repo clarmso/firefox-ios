@@ -30,6 +30,14 @@ jobs:
                   {
                     "blocks":[
                       {
+                        "type": "header",
+                        "text": {
+                          "type": "plain_text",
+                          "text": ":white_check_mark: $browser iOS $test_plan - $ios_simulator $ios_version ($branch)",
+                          "emoji": true
+                        }
+                      },
+                      {
                         "type":"divider"
                       }
                     ]
