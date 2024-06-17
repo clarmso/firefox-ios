@@ -14,7 +14,7 @@ jobs:
                 {\
                   blocks: [\
                   {\
-                    type: "divider"\
+                    type: 'divider'\
                   }\
                   ]\
                 }" > slack.json
@@ -26,7 +26,14 @@ jobs:
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
               with:
-                payload-file-path: "./slack.json"
+                payload: |
+                  {
+                    blocks: [
+                      {
+                        type: 'divider'
+                      }
+                    ]
+                  }
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_INFRA_ALERTS_WEBHOOK }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
