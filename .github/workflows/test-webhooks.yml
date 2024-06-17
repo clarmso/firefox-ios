@@ -10,9 +10,17 @@ jobs:
             - name: Hello World!
               run: |
                 echo "Hello World!"
-                jq -n --arg type 'divider' '$ARGS.named' | \
-                  jq -n '.blocks|=[inputs]' > slack.json
+                echo "\
+                {\
+                  blocks: [\
+                  {\
+                    type: "divider"\
+                  }\
+                  ]\
+                }"
                 cat slack.json
+                #jq -n --arg type 'divider' '$ARGS.named' | \
+                #  jq -n '.blocks|=[inputs]' > slack.json
                 # jq -n --arg blocks '[]' '$ARGS.named' > slack.json
             - name: Report to Slack
               id: slack
