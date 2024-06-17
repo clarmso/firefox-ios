@@ -11,6 +11,9 @@ jobs:
               run: |
                 echo "Hello World!"
                 export ios_version="17.4"
+                export ios_simulator="iPhone 15"
+                echo $ios_version
+                echo $ios_simulator
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
@@ -22,7 +25,7 @@ jobs:
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": ":white_check_mark: $browser iOS $test_plan - $ios_simulator $ios_version ($branch)",
+                          "text": ":white_check_mark: $browser iOS $test_plan - ${{ env.ios_simulator }} ${{ env.ios_version }} ($branch)",
                           "emoji": true
                         }
                       },
