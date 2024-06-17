@@ -10,12 +10,13 @@ jobs:
             - name: Hello World!
               run: |
                 echo "Hello World!"
-                jq -n --arg browser 'focus-ios' --arg two 'Banana' '$ARGS.named' > slack.json
+                jq -n '.blocks |= []' > slack.json
+                # jq -n --arg blocks '[]' '$ARGS.named' > slack.json
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
               with:
                 payload-file-path: "./slack.json"
               env:
-                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_INFRA_ALERTS_WEBHOOK }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
