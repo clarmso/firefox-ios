@@ -55,7 +55,6 @@ jobs:
                           },
                           {
                             "type": "mrkdwn",
-                            "emoji": true,
                             "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|*Github Actions Job*> :github:"
                           }
                         ]
