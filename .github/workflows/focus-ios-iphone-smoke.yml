@@ -109,7 +109,7 @@ jobs:
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": "${{ steps.pass-fail.outputs.pass_fail }} ${{ env.browser }} :firefox: :appleinc: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }} (${{ github.ref_name }})",
+                          "text": "${{ steps.pass-fail.outputs.pass_fail }} ${{ env.browser }} :firefox: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }}",
                           "emoji": true
                         }
                       },
