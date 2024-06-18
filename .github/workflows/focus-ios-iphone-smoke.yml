@@ -59,7 +59,6 @@ jobs:
                     -target ${{ env.xcodebuild_target }} \
                     -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' \
                     -testPlan ${{ env.xcodebuild_test_plan }} \
-                    -only-testing:XCUITest/CopyPasteTest \
                     -resultBundlePath ${{ env.test_results_directory }}/results \
                     || touch ${{ env.test_results_directory }}/fail.txt && exit 0
               working-directory:  ${{ env.browser }}
