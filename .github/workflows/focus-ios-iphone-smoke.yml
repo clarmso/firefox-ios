@@ -109,7 +109,7 @@ jobs:
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": "${{ steps.pass-fail.outputs.pass_fail }} ${{ env.browser }} iOS ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }} (${{ github.ref_name }})",
+                          "text": "${{ steps.pass-fail.outputs.pass_fail }} ${{ env.browser }} :firefox: :appleinc: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }} (${{ github.ref_name }})",
                           "emoji": true
                         }
                       },
@@ -120,7 +120,7 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*Test plan*: $test_plan"
+                          "text": "*Test plan*: ${{ env.xcodebuild_test_plan }}"
                         }
                       },
                       {
@@ -141,16 +141,40 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> "
+                          "text": "*Test plan*: ${{ env.xcodebuild_test_plan }}"
                         }
                       },
                       {
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|*Github Actions Job*>"
+                          "text": "*Status*: ${{ steps.pass-fail.outputs.pass_fail }}"
                         }
-                      }
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> :debug:"
+                        }
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|*Github Actions Job*> :github:"
+                        }
+                      },
+                      {
+                        "type":"divider"
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": ":testops-notify: created by <https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview|Mobile Test Engineering>"
+                        }
+                      },
                     ]
                   }
               env:
