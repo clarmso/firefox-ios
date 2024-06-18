@@ -108,23 +108,20 @@ jobs:
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": "${{ steps.pass-fail.outputs.pass_fail }} ${{ env.browser }} :firefox: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }}",
+                          "text": "hello ${{ env.browser }} :firefox: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }}",
                           "emoji": true
                         }
                       },
                       {
                         "type":"divider"
                       },
-                    	{
+                      {
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
                           "text": "*Branch*: `${{ github.ref_name }}`"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        fields: [
+                        },
+                        "fields": [
                           {
                             "type": "mrkdwn",
                             "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> :debug:"
@@ -151,7 +148,6 @@ jobs:
                   }
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-                SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
             - name: Report status
               run: |
                 exit ${{ steps.pass-fail.outputs.exit_value }}
