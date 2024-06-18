@@ -111,12 +111,47 @@ jobs:
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": "${{ steps.pass-fail.outputs.pass_fail }} ${{ env.browser }} iOS ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} ${{ env.ios_version }} (${{ github.ref_name }})",
+                          "text": "${{ steps.pass-fail.outputs.pass_fail }} ${{ env.browser }} iOS ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }} (${{ github.ref_name }})",
                           "emoji": true
                         }
                       },
                       {
                         "type":"divider"
+                      },
+                    	{
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Test plan*: $test_plan"
+                        }
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Branch*: `${{ github.ref_name }}`"
+                        }
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Simulator*: ${{ env.ios_simulator }} iOS ${{ env.ios_version }}"
+                        }
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> "
+                        }
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|*Github Actions Job*>"
+                        }
                       }
                     ]
                   }
