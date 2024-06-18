@@ -156,7 +156,7 @@ jobs:
                       {
                         "type": "context",
                         "elements": [
-                          "text": {
+                          {
                             "type": "mrkdwn",
                             "text": ":testops-notify: created by <https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview|Mobile Test Engineering>"
                           }
