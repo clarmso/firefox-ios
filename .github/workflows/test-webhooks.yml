@@ -41,38 +41,6 @@ jobs:
                       },
                       {
                         "type":"divider"
-                      },
-                    	{
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Branch*: `${{ github.ref_name }}`"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        fields: [
-                          {
-                            "type": "mrkdwn",
-                            "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> :debug:"
-                          },
-                          {
-                            "type": "mrkdwn",
-                            "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|*Github Actions Job*> :github:"
-                          }
-                        ]
-                      },
-                      {
-                        "type":"divider"
-                      },
-                      {
-                        "type": "context",
-                        "elements": [
-                          {
-                            "type": "mrkdwn",
-                            "text": ":testops-notify: created by <https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview|Mobile Test Engineering>"
-                          }
-                        ]
                       }
                     ]
                   }
