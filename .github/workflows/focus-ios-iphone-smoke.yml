@@ -141,20 +141,6 @@ jobs:
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
-                          "text": "*Test plan*: ${{ env.xcodebuild_test_plan }}"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Status*: ${{ steps.pass-fail.outputs.pass_fail }}"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
                           "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> :debug:"
                         }
                       },
