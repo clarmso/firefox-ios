@@ -115,13 +115,13 @@ jobs:
                       {
                         "type":"divider"
                       },
-                    	{
+                      {
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
                           "text": "*Branch*: `${{ github.ref_name }}`"
                         },
-                        fields: [
+                        "fields": [
                           {
                             "type": "mrkdwn",
                             "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> :debug:"
@@ -147,8 +147,7 @@ jobs:
                     ]
                   }
               env:
-                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_INFRA_ALERTS_WEBHOOK }}
-                SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
             - name: Report status
               run: |
                 exit ${{ steps.pass-fail.outputs.exit_value }}
