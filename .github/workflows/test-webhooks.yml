@@ -42,28 +42,21 @@ jobs:
                       {
                         "type":"divider"
                       },
-                        {
+                      {
                         "type": "section",
                         "text": {
                           "type": "mrkdwn",
                           "text": "*Branch*: `${{ github.ref_name }}`"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "text": "A message *with some bold text* and _some italicized text_.",
-                          "type": "mrkdwn"
                         },
                         "fields": [
                           {
                             "type": "mrkdwn",
-                            "text": "High"
+                            "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> :debug:"
                           },
                           {
                             "type": "plain_text",
                             "emoji": true,
-                            "text": "Silly"
+                            "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|*Github Actions Job*> :github:"
                           }
                         ]
                       }
