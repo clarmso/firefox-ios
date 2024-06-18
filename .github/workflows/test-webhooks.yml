@@ -3,6 +3,16 @@ name: "Test webhooks"
 on:
     workflow_dispatch:
 
+env:
+    browser: focus-ios
+    xcode_version: 15.4
+    ios_version: 17.5
+    ios_simulator: iPhone 15
+    xcodebuild_test_plan: SmokeTest
+    xcodebuild_scheme: Focus
+    xcodebuild_target: XCUITest
+    test_results_directory: /Users/runner/tmp
+
 jobs:
     call-webhooks:
         runs-on: macos-14
@@ -25,15 +35,47 @@ jobs:
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": ":white_check_mark: $browser iOS $test_plan - ${{ env.ios_simulator }} ${{ env.ios_version }} ($branch)",
+                          "text": "hello ${{ env.browser }} :firefox: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }}",
                           "emoji": true
                         }
                       },
                       {
                         "type":"divider"
+                      },
+                    	{
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Branch*: `${{ github.ref_name }}`"
+                        }
+                      },
+                      {
+                        "type": "section",
+                        fields: [
+                          {
+                            "type": "mrkdwn",
+                            "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> :debug:"
+                          },
+                          {
+                            "type": "mrkdwn",
+                            "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|*Github Actions Job*> :github:"
+                          }
+                        ]
+                      },
+                      {
+                        "type":"divider"
+                      },
+                      {
+                        "type": "context",
+                        "elements": [
+                          {
+                            "type": "mrkdwn",
+                            "text": ":testops-notify: created by <https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview|Mobile Test Engineering>"
+                          }
+                        ]
                       }
                     ]
                   }
               env:
-                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TEST_INFRA_ALERTS_WEBHOOK }}
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
