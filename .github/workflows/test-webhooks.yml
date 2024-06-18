@@ -41,6 +41,13 @@ jobs:
                       },
                       {
                         "type":"divider"
+                      },
+                        {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Branch*: `${{ github.ref_name }}`"
+                        }
                       }
                     ]
                   }
