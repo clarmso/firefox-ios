@@ -79,12 +79,12 @@ jobs:
               with:
                process_gcloudignore: false
                path: '${{ env.test_results_directory }}/index.html'
-               destination: 'mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}'
+               destination: 'mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ matrix.ios_simulator }}_${{ github.run_number }}'
             - name: Upload xcresult file to Github
               id: upload-github
               uses: actions/upload-artifact@v4.3.3
               with:
-                name: ${{ env.browser }}-${{ env.xcodebuild_test_plan }}-${{ github.run_number }}
+                name: ${{ env.browser }}-${{ env.xcodebuild_test_plan }}-${{ matrix.ios_simulator }}-${{ github.run_number }}
                 path: ${{ env.test_results_directory }}/index.html
             - name : Process pass/fail info
               id: pass-fail
