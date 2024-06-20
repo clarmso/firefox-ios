@@ -19,6 +19,8 @@ jobs:
           matrix:
               ios_simulator: ['iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
         steps:
+            - name: Check out source code
+              uses: actions/checkout@v4.1.7
             - name: Hello World!
               run: |
                 echo "Hello World!"
