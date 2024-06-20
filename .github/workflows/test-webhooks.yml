@@ -22,6 +22,8 @@ jobs:
             - name: Hello World!
               run: |
                 echo "Hello World!"
+                ls ./test-fixtures/
+                ls ./test-fixtures/ci
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
