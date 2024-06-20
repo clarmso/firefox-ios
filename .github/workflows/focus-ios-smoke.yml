@@ -107,6 +107,12 @@ jobs:
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+                pass_fail: ${{ steps.pass-fail.outputs.pass_fail }}
+                ref_name: ${{ github.ref_name }}
+                run_number: ${{ github.run_number }}
+                ios_simulator: ${{ matrix.ios_simulator }}
+                server_url: ${{ github.server_url }}
+                repository: ${{ github.repository }}
             - name: Report status
               run: |
                 exit ${{ steps.pass-fail.outputs.exit_value }}
