@@ -88,7 +88,6 @@ jobs:
                 repository: ${{ github.repository }}
                 run_id: ${{ github.run_id }}
                 server_url: ${{ github.server_url }}
-
             - name: Report status
               run: |
                 exit ${{ steps.run-tests.outcome == 'success' ? 0 : 1 }}
