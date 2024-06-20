@@ -4,7 +4,7 @@
         "type": "header",
         "text": {
           "type": "plain_text",
-          "text": "${{ steps.pass-fail.outputs.pass_fail }} ${{ env.browser }} :firefox: ${{ env.xcodebuild_test_plan }} - ${{ matrix.ios_simulator }} iOS ${{ env.ios_version }}",
+          "text": "${{ env.pass_fail }} ${{ env.browser }} :firefox: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }}",
           "emoji": true
         }
       },
@@ -15,7 +15,7 @@
         "type": "section",
         "text": {
           "type": "mrkdwn",
-          "text": "*Branch*: `${{ github.ref_name }}`\n<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> :debug:\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|*Github Actions Job*> :github:"
+          "text": "*Branch*: `${{ env.ref_name }}`\n<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ env.run_number }}/index.html|*Test Report*> :debug:\n<${{ env.server_url }}/${{ env.repository }}/actions/runs/${{ env.run_id }}|*Github Actions Job*> :github:"
         }
       },
       {

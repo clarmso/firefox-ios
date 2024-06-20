@@ -7,7 +7,6 @@ env:
     browser: focus-ios
     xcode_version: 15.4
     ios_version: 17.5
-    ios_simulator: iPhone 15
     xcodebuild_test_plan: SmokeTest
     xcodebuild_scheme: Focus
     xcodebuild_target: XCUITest
@@ -16,63 +15,24 @@ env:
 jobs:
     call-webhooks:
         runs-on: macos-14
+        strategy:
+          matrix:
+              ios_simulator: ['iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
         steps:
             - name: Hello World!
               run: |
                 echo "Hello World!"
-                export ios_version="17.4"
-                export ios_simulator="iPhone 15"
-                echo $ios_version
-                echo $ios_simulator
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
               with:
-                payload: |
-                  {
-                    "blocks":[
-                      {
-                        "type": "header",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "hello ${{ env.browser }} :firefox: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }}",
-                          "emoji": true
-                        }
-                      },
-                      {
-                        "type":"divider"
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Branch*: `${{ github.ref_name }}`"
-                        },
-                        "fields": [
-                          {
-                            "type": "mrkdwn",
-                            "text": "<https://storage.googleapis.com/mobile-reports/public/${{ env.browser }}/${{ env.xcodebuild_test_plan }}/result_${{ github.run_number }}/index.html|*Test Report*> :debug:"
-                          },
-                          {
-                            "type": "mrkdwn",
-                            "text": "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|*Github Actions Job*> :github:"
-                          }
-                        ]
-                      },
-                      {
-                        "type":"divider"
-                      },
-                      {
-                        "type": "context",
-                        "elements": [
-                          {
-                            "type": "mrkdwn",
-                            "text": ":testops-notify: created by <https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview|Mobile Test Engineering>"
-                          }
-                        ]
-                      }
-                    ]
-                  }
+                payload-file-path: "./test-fixtures/ci/slack-notification-xcuitest.json"
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+                pass_fail: ":white_check_mark:"
+                ref_name: "main"
+                run_number: "111111111111"
+                ios_simulator: ${{ matrix.ios_simulator }}
+                server_url: "https://github.com/"
+                repository: "https://github.com/clarmso/firefox-ios/"
