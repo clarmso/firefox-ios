@@ -83,12 +83,12 @@ jobs:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
                 ios_simulator: ${{ matrix.ios_simulator }}
-                pass_fail:  ${{ steps.run-tests.outcome == 'success' ? ':white_check_mark:' : ':x:' }}
+                pass_fail:  ${{ steps.run-tests.outcome == 'success' }}
                 ref_name: ${{ github.ref_name }}
                 repository: ${{ github.repository }}
                 run_id: ${{ github.run_id }}
                 server_url: ${{ github.server_url }}
             - name: Report status
               run: |
-                exit ${{ steps.run-tests.outcome == 'success' ? 0 : 1 }}
+                exit ${{ steps.run-tests.outcome == 'success' }}
               continue-on-error: true
