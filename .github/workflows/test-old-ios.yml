@@ -1,0 +1,28 @@
+name: "Download old iOS simulator"
+    
+on:
+    workflow_dispatch:
+
+env:
+    browser: focus-ios
+    xcode_version: 15.4
+    ios_version: 16.4
+    ios_simulator: iPhone 14
+    xcodebuild_test_plan: SmokeTest
+    xcodebuild_scheme: Focus
+    xcodebuild_target: XCUITest
+    test_results_directory: /Users/runner/tmp
+
+jobs:
+    download-old-ios:
+        runs-on: macos-14
+        steps:
+            - name: Setup Xcode
+              id: xcode
+              run: |
+                sudo rm -rf /Applications/Xcode.app
+                sudo xcode-select -s /Applications/Xcode_${{ env.xcode_version }}.app/Contents/Developer
+                xcodebuild -version
+            - name: Query simulators
+              run: |
+                xcrun simctl list
