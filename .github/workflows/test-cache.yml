@@ -21,10 +21,10 @@ jobs:
             - name: Hello World!
               run: |
                 echo "Hello World!"
-                - name: Setup Python
-                uses: actions/setup-python@v5.1.0
-                with:
-                  python-version: '3.11'
+            - name: Setup Python
+              uses: actions/setup-python@v5.1.0
+              with:
+                python-version: '3.11'
             - name: Install packages
               id: packages
               run: |
