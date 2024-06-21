@@ -64,6 +64,10 @@ jobs:
                 path: ~/DerivedData/Build/Products
                 retention-days: 1
     run-something:
+      strategy:
+        fail-fast: false
+        matrix:
+            ios_simulator: ['iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
       runs-on: macos-14
       needs: just-compile
       steps: 
