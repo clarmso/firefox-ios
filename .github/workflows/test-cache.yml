@@ -1,4 +1,4 @@
-name: "Test webhooks"
+name: "Test caching"
     
 on:
     workflow_dispatch:
