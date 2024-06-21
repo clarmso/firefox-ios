@@ -91,6 +91,5 @@ jobs:
                 run_id: ${{ github.run_id }}
                 server_url: ${{ github.server_url }}
             - name: Return fail status if a test fails
-              if: ${{ ! steps.run-tests.outcome == 'success' }}
               run: |
-                exit 1
+                exit ${{ steps.run-tests.outcome == 'success' && 0 || 1 }}
