@@ -1,0 +1,66 @@
+name: "Test webhooks"
+    
+on:
+    workflow_dispatch:
+
+env:
+    browser: focus-ios
+    xcode_version: 15.4
+    ios_version: 17.5
+    xcodebuild_test_plan: SmokeTest
+    xcodebuild_scheme: Focus
+    xcodebuild_target: XCUITest
+    test_results_directory: /Users/runner/tmp
+
+jobs:
+    just-compile:
+        runs-on: macos-14
+        strategy:
+          matrix:
+              ios_simulator: ['iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
+        steps:
+            - name: Check out source code
+              uses: actions/checkout@v4.1.7
+            - name: Hello World!
+              run: |
+                echo "Hello World!"
+                - name: Setup Python
+                uses: actions/setup-python@v5.1.0
+                with:
+                  python-version: '3.11'
+            - name: Install packages
+              id: packages
+              run: |
+                brew update
+                pip3 install virtualenv pipenv
+                brew install xctesthtmlreport
+            - name: Setup Xcode
+              id: xcode
+              run: |
+                sudo rm -rf /Applications/Xcode.app
+                sudo xcode-select -s /Applications/Xcode_${{ env.xcode_version }}.app/Contents/Developer
+                xcodebuild -version
+                ./checkout.sh
+                ./bootstrap.sh --force
+            - name: Compile source code
+              id: compile
+              run: |
+                xcodebuild \
+                    -resolvePackageDependencies \
+                    -onlyUsePackageVersionsFromResolvedFile
+                xcodebuild \
+                    build-for-testing \
+                    -scheme ${{ env.xcodebuild_scheme }} \
+                    -target ${{ env.xcodebuild_target }} \
+                    -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}'
+              working-directory: ${{ env.browser }}
+            - name: Where is Derived Data?
+              run: |
+                ls ~/Library/Developer/Xcode/DerivedData/
+            - name: Compress Derived Data
+              id: derived-data
+              uses: actions/upload-artifact@v4.3.3
+              with:
+                name: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
+                path: ~/Library/Developer/Xcode/DerivedData/
+                retention-days: 1
