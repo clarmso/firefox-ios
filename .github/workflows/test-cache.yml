@@ -50,15 +50,17 @@ jobs:
                     build-for-testing \
                     -scheme ${{ env.xcodebuild_scheme }} \
                     -target ${{ env.xcodebuild_target }} \
+                    -derivedDataPath ~/DerivedData \
                     -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}'
               working-directory: ${{ env.browser }}
-            - name: Where is Derived Data?
+            - name: Compress derived data
               run: |
-                ls ~/Library/Developer/Xcode/DerivedData/
+                ls ~DerivedData/
+                ls ~DerivedData/Blockzilla-*/Build/Products
             - name: Compress Derived Data
               id: derived-data
               uses: actions/upload-artifact@v4.3.3
               with:
                 name: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-                path: ~/Library/Developer/Xcode/DerivedData/*
+                path: ~/DerivedData/Blockzilla-*/Build/Products
                 retention-days: 1
