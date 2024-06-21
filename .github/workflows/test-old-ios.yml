@@ -26,3 +26,7 @@ jobs:
             - name: Query simulators
               run: |
                 xcrun simctl list
+            - name: Download old stuff
+              run: |
+                xcodebuild -downloadPlatform iOS
+                xcrun simctl list
