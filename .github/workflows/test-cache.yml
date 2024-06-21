@@ -93,17 +93,14 @@ jobs:
             path: ~/DerivedData/Build/Products
         - name: Run a single test!
           run: |
-            - name: Run tests
-              id: run-tests
-              run: |
-                xcodebuild \
-                    test-without-building \
-                    -scheme ${{ env.xcodebuild_scheme }} \
-                    -target ${{ env.xcodebuild_target }} \
-                    -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' \
-                    -testPlan ${{ env.xcodebuild_test_plan }} \
-                    -only-testing:XCUITest/BrowsingTest \
-                    -derivedDataPath ~/DerivedData \
-                    -resultBundlePath ${{ env.test_results_directory }}/results
-              working-directory:  ${{ env.browser }}
-              continue-on-error: true
+            xcodebuild \
+              test-without-building \
+              -scheme ${{ env.xcodebuild_scheme }} \
+              -target ${{ env.xcodebuild_target }} \
+              -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' \
+              -testPlan ${{ env.xcodebuild_test_plan }} \
+              -only-testing:XCUITest/BrowsingTest 
+              -derivedDataPath ~/DerivedData \
+              -resultBundlePath ${{ env.test_results_directory }}/results
+          working-directory:  ${{ env.browser }}
+          continue-on-error: true
