@@ -85,7 +85,7 @@ jobs:
             sudo xcode-select -s /Applications/Xcode_${{ env.xcode_version }}.app/Contents/Developer
             xcodebuild -version
             ./checkout.sh
-            ./bootstrap.sh --force        
+            ./bootstrap.sh --force  
         - name: Get derived data
           uses: actions/download-artifact@v4
           with:
@@ -103,6 +103,7 @@ jobs:
                     -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' \
                     -testPlan ${{ env.xcodebuild_test_plan }} \
                     -only-testing:XCUITest/BrowsingTest \
+                    -derivedDataPath ~/DerivedData \
                     -resultBundlePath ${{ env.test_results_directory }}/results
               working-directory:  ${{ env.browser }}
               continue-on-error: true
