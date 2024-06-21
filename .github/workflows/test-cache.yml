@@ -53,10 +53,10 @@ jobs:
                     -derivedDataPath ~/DerivedData \
                     -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}'
               working-directory: ${{ env.browser }}
-            - name: Compress derived data
+            - name: What's in derived data?
               run: |
-                ls ~DerivedData/
-                ls ~DerivedData/Blockzilla-*/Build/Products
+                ls ~/DerivedData/
+                ls ~/DerivedData/Blockzilla-*/Build/Products
             - name: Compress Derived Data
               id: derived-data
               uses: actions/upload-artifact@v4.3.3
