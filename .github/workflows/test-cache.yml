@@ -60,5 +60,5 @@ jobs:
               uses: actions/upload-artifact@v4.3.3
               with:
                 name: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-                path: ~/Library/Developer/Xcode/DerivedData/
+                path: ~/Library/Developer/Xcode/DerivedData/*
                 retention-days: 1
