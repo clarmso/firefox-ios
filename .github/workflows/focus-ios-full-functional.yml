@@ -20,16 +20,6 @@ jobs:
         steps:
             - name: Check out source code
               uses: actions/checkout@v4.1.7
-            - name: Setup Python
-              uses: actions/setup-python@v5.1.0
-              with:
-                python-version: '3.11'
-            - name: Install packages
-              id: packages
-              run: |
-                brew update
-                pip3 install virtualenv pipenv
-                brew install xctesthtmlreport
             - name: Setup Xcode
               id: xcode
               run: |
@@ -69,6 +59,11 @@ jobs:
         steps:
             - name: Check out source code
               uses: actions/checkout@v4.1.7
+            - name: Install packages
+              id: packages
+              run: |
+                brew update
+                brew install xctesthtmlreport
             - name: Setup Xcode
               id: xcode
               run: |
