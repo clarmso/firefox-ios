@@ -15,9 +15,6 @@ env:
 jobs:
     just-compile:
         runs-on: macos-14
-        strategy:
-          matrix:
-              ios_simulator: ['iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
         steps:
             - name: Check out source code
               uses: actions/checkout@v4.1.7
