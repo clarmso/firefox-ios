@@ -15,6 +15,7 @@ env:
 jobs:
     run-tests:
         strategy:
+            fail-fast: false
             matrix:
                 ios_simulator: ['iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
         name: Build and run tests
@@ -74,6 +75,7 @@ jobs:
               with:
                 name: ${{ env.browser }}-${{ env.xcodebuild_test_plan }}-${{ matrix.ios_simulator }}-${{ github.run_number }}
                 path: ${{ env.test_results_directory }}/index.html
+                retention-days: 90
             - name: Report to Slack
               id: slack
               uses: slackapi/slack-github-action@v1.26.0
@@ -83,7 +85,7 @@ jobs:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
                 ios_simulator: ${{ matrix.ios_simulator }}
-                pass_fail:  ${{ steps.run-tests.outcome == 'success' && ':white_check_mark' || ':x:' }}
+                pass_fail:  ${{ steps.run-tests.outcome }}
                 ref_name: ${{ github.ref_name }}
                 repository: ${{ github.repository }}
                 run_id: ${{ github.run_id }}
@@ -91,4 +93,3 @@ jobs:
             - name: Report status
               run: |
                 exit ${{ steps.run-tests.outcome == 'success' && 0 || 1 }}
-              continue-on-error: true

@@ -4,7 +4,7 @@
         "type": "header",
         "text": {
           "type": "plain_text",
-          "text": "${{ env.pass_fail }} ${{ env.browser }} :firefox: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }}",
+          "text": "${{ env.pass_fail == 'success' && ':white_check_mark' || ':x:' }} ${{ env.browser }} :firefox: ${{ env.xcodebuild_test_plan }} - ${{ env.ios_simulator }} iOS ${{ env.ios_version }}",
           "emoji": true
         }
       },
