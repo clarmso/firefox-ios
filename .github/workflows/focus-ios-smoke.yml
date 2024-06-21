@@ -15,7 +15,7 @@ env:
     
 jobs:
     compile:
-        name: Build and run tests
+        name: Compile
         runs-on: macos-14
         steps:
             - name: Check out source code
@@ -59,12 +59,13 @@ jobs:
                 path: ~/DerivedData/Build/Products
                 retention-days: 2          
     run-tests:
+        name: Run tests
+        runs-on: macos-14
+        needs: compile
         strategy:
             fail-fast: false
             matrix:
                 ios_simulator: [ 'iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
-        name: Build and run tests
-        runs-on: macos-14
         steps:
             - name: Check out source code
               uses: actions/checkout@v4.1.7
