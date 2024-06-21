@@ -31,7 +31,6 @@ jobs:
               run: |
                 brew update
                 pip3 install virtualenv pipenv
-                brew install xctesthtmlreport
             - name: Setup Xcode
               id: xcode
               run: |
@@ -64,3 +63,46 @@ jobs:
                 name: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
                 path: ~/DerivedData/Build/Products
                 retention-days: 1
+    run-something:
+      runs-on: macos-14
+      needs: just-compile
+      steps: 
+        - name: Check out source code
+          uses: actions/checkout@v4.1.7
+        - name: Setup Python
+          uses: actions/setup-python@v5.1.0
+          with:
+            python-version: '3.11'
+        - name: Install packages
+          id: packages
+          run: |
+            brew update
+            pip3 install virtualenv pipenv
+        - name: Setup Xcode
+          id: xcode
+          run: |
+            sudo rm -rf /Applications/Xcode.app
+            sudo xcode-select -s /Applications/Xcode_${{ env.xcode_version }}.app/Contents/Developer
+            xcodebuild -version
+            ./checkout.sh
+            ./bootstrap.sh --force        
+        - name: Get derived data
+          uses: actions/download-artifact@v4
+          with:
+            name: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
+            path: ~/DerivedData/Build/Products
+        - name: Run a single test!
+          run: |
+            - name: Run tests
+              id: run-tests
+              run: |
+                xcodebuild \
+                    test-without-building \
+                    -scheme ${{ env.xcodebuild_scheme }} \
+                    -target ${{ env.xcodebuild_target }} \
+                    -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}' \
+                    -testPlan ${{ env.xcodebuild_test_plan }} \
+                    -only-testing:XCUITest/BrowsingTest \
+                    -resultBundlePath ${{ env.test_results_directory }}/results
+              working-directory:  ${{ env.browser }}
+              continue-on-error: true
