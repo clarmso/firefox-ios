@@ -92,4 +92,4 @@ jobs:
                 server_url: ${{ github.server_url }}
             - name: Return fail status if a test fails
               run: |
-                exit ${{ steps.run-tests.outcome == 'success' && 0 || 1 }}
+                exit ${{ steps.run-tests.outcome == 'success' && '0' || '1' }}
