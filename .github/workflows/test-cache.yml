@@ -7,6 +7,7 @@ env:
     browser: focus-ios
     xcode_version: 15.4
     ios_version: 17.5
+    ios_simulator: iPhone 15
     xcodebuild_test_plan: SmokeTest
     xcodebuild_scheme: Focus
     xcodebuild_target: XCUITest
@@ -49,7 +50,7 @@ jobs:
                     build-for-testing \
                     -scheme ${{ env.xcodebuild_scheme }} \
                     -target ${{ env.xcodebuild_target }} \
-                    -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}'
+                    -destination 'platform=iOS Simulator,name=${{ env.ios_simulator }},OS=${{ env.ios_version }}'
               working-directory: ${{ env.browser }}
             - name: Where is Derived Data?
               run: |
