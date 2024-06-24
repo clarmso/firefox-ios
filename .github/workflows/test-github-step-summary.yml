@@ -1,0 +1,33 @@
+name: "Test GITHUB_STEP_SUMMARY"
+    
+on:
+    workflow_dispatch:
+
+env:
+    browser: focus-ios
+    xcode_version: 15.4
+    ios_version: 17.5
+    ios_simulator_default: iPhone 15
+    xcodebuild_scheme: Focus
+    xcodebuild_target: XCUITest
+    test_results_directory: /Users/runner/tmp
+
+jobs:
+    print-heading:
+        runs-on: macos-14
+        steps:
+            - run: |
+                echo "# Test Summary (${{ env.browser }}, ${{ env.xcode_version }}, iOS ${{ env.ios_version }})" >> GITHUB_STEP_SUMMARY
+    test-report:
+        name: Print test report
+        runs-on: macos-14
+        needs: print-heading
+        strategy:
+            fail-fast: false
+            matrix:
+                xcodebuild_test_plan: ['SmokeTest', 'FullFunctionalTests']
+                ios_simulator: [ 'iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
+        steps:
+            - name: Dummy test report
+              run: |
+                echo "## ${{ matrix.xcodebuild_test_plan }} ${{matrix.ios_simulator}}" >> GITHUB_STEP_SUMMARY
