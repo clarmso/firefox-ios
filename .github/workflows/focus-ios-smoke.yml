@@ -8,7 +8,6 @@ env:
     xcode_version: 15.4
     ios_version: 17.5
     ios_simulator_default: iPhone 15
-    xcodebuild_test_plan: SmokeTest
     xcodebuild_scheme: Focus
     xcodebuild_target: XCUITest
     test_results_directory: /Users/runner/tmp
@@ -55,7 +54,8 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                ios_simulator: [ 'iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
+                xcodebuild_testplan: ['SmokeTest', 'FullFunctionalTests']
+                ios_simulator: [ env.ios_simulator_default, 'iPad Pro (12.9-inch) (6th generation)']
         steps:
             - name: Check out source code
               uses: actions/checkout@v4.1.7
