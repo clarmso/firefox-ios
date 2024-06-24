@@ -66,8 +66,7 @@ jobs:
               run: |
                 brew update
                 brew install xctesthtmlreport
-                brew tap a7ex/homebrew-formulae
-                brew install xcresultparser
+                npm install -g junit-to-md
             - name: Setup Xcode
               id: xcode
               run: |
@@ -96,15 +95,17 @@ jobs:
                     -resultBundlePath ${{ env.test_results_directory }}/results
               working-directory:  ${{ env.browser }}
               continue-on-error: true
-            - name: Print test report to Github Actions Job
-              id: report-github-actions-page
-              run: |
-                xcresultparser -o txt ${{ env.test_results_directory }}/results.xcresult >> $GITHUB_STEP_SUMMARY
-            - name: Prettyprint test report
+            - name: Create test report
               id: test-report
               run: |
-                xchtmlreport ${{ env.test_results_directory }}/results.xcresult
-            - name: Upload xcresult file to Github
+                xchtmlreport -j ${{ env.test_results_directory }}/results.xcresult
+            - name: Output report to Github Actions job page
+              id: github-actions-job
+              run: |
+                cp ${{ env.test_results_directory }}/report.junit ./TEST.xml
+                junit-to-md summary >> $GITHUB_STEP_SUMMARY
+                junit-to-md text  >> $GITHUB_STEP_SUMMARY                
+            - name: Upload html report to Github
               id: upload-github
               uses: actions/upload-artifact@v4.3.3
               with:
