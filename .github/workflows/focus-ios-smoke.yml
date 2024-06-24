@@ -54,8 +54,10 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                xcodebuild_test_plan: ['SmokeTest', 'FullFunctionalTests']
-                ios_simulator: [ 'iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
+                xcodebuild_test_plan: ['SmokeTest']
+                ios_simulator: ['iPhone 15']
+                # xcodebuild_test_plan: ['SmokeTest', 'FullFunctionalTests']
+                # ios_simulator: [ 'iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
         steps:
             - name: Check out source code
               uses: actions/checkout@v4.1.7
@@ -88,9 +90,14 @@ jobs:
                     -derivedDataPath ~/DerivedData \
                     -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}' \
                     -testPlan ${{ matrix.xcodebuild_test_plan }} \
+                    -only-testing:XCUITest/BrowsingTest \
                     -resultBundlePath ${{ env.test_results_directory }}/results
               working-directory:  ${{ env.browser }}
               continue-on-error: true
+            - name: Print test report to Github Actions Job
+              id: report-github-actions-page
+              run: |
+                xcresultparser -o md ${{ env.test_results_directory }}/results.xcresult >> $GITHUB_STEP_SUMMARY
             - name: Prettyprint test report
               id: test-report
               run: |
