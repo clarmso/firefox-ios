@@ -17,7 +17,7 @@ jobs:
         runs-on: macos-14
         steps:
             - run: |
-                echo "# Test Summary (${{ env.browser }}, ${{ env.xcode_version }}, iOS ${{ env.ios_version }})" >> GITHUB_STEP_SUMMARY
+                echo "# Test Summary (${{ env.browser }}, ${{ env.xcode_version }}, iOS ${{ env.ios_version }})" >> $GITHUB_STEP_SUMMARY
     test-report:
         name: Print test report
         runs-on: macos-14
@@ -30,4 +30,4 @@ jobs:
         steps:
             - name: Dummy test report
               run: |
-                echo "## ${{ matrix.xcodebuild_test_plan }} ${{matrix.ios_simulator}}" >> GITHUB_STEP_SUMMARY
+                echo "## ${{ matrix.xcodebuild_test_plan }} ${{matrix.ios_simulator}}" >> $GITHUB_STEP_SUMMARY
