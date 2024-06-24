@@ -99,7 +99,7 @@ jobs:
             - name: Print test report to Github Actions Job
               id: report-github-actions-page
               run: |
-                xcresultparser -o cli ${{ env.test_results_directory }}/results.xcresult >> $GITHUB_STEP_SUMMARY
+                xcresultparser -o txt ${{ env.test_results_directory }}/results.xcresult >> $GITHUB_STEP_SUMMARY
             - name: Prettyprint test report
               id: test-report
               run: |
