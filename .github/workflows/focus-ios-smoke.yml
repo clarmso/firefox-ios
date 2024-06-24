@@ -1,4 +1,4 @@
-name: "Focus Smoke Tests"
+name: "Focus Tests"
     
 on:
     workflow_dispatch:
@@ -54,7 +54,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                xcodebuild_testplan: ['SmokeTest', 'FullFunctionalTests']
+                xcodebuild_test_plan: ['SmokeTest', 'FullFunctionalTests']
                 ios_simulator: [ 'iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
         steps:
             - name: Check out source code
@@ -87,7 +87,7 @@ jobs:
                     -target ${{ env.xcodebuild_target }} \
                     -derivedDataPath ~/DerivedData \
                     -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}' \
-                    -testPlan ${{ env.xcodebuild_test_plan }} \
+                    -testPlan ${{ matrix.xcodebuild_test_plan }} \
                     -resultBundlePath ${{ env.test_results_directory }}/results
               working-directory:  ${{ env.browser }}
               continue-on-error: true
@@ -99,7 +99,7 @@ jobs:
               id: upload-github
               uses: actions/upload-artifact@v4.3.3
               with:
-                name: ${{ env.browser }}-${{ env.xcodebuild_test_plan }}-${{ matrix.ios_simulator }}-${{ github.run_number }}
+                name: ${{ env.browser }}-${{ matrix.xcodebuild_test_plan }}-${{ matrix.ios_simulator }}-${{ github.run_number }}
                 path: ${{ env.test_results_directory }}/index.html
                 retention-days: 90
             - name: Report to Slack
