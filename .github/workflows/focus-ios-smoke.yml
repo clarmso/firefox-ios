@@ -66,7 +66,8 @@ jobs:
               run: |
                 brew update
                 brew install xctesthtmlreport
-                npm install -g junit-to-md
+                brew tap kitproj/junit2md --custom-remote https://github.com/kitproj/junit2md
+                brew install junit2md
             - name: Setup Xcode
               id: xcode
               run: |
@@ -99,12 +100,10 @@ jobs:
               id: test-report
               run: |
                 xchtmlreport -j ${{ env.test_results_directory }}/results.xcresult
-            - name: Output report to Github Actions job page
+            - name: Output markdown report to Github Actions job page
               id: github-actions-job
               run: |
-                cp ${{ env.test_results_directory }}/report.junit ./TEST.xml
-                junit-to-md summary >> $GITHUB_STEP_SUMMARY
-                junit-to-md text  >> $GITHUB_STEP_SUMMARY                
+                junit2md < ${{ env.test_results_directory }}/report.junit >> $GITHUB_STEP_SUMMARY            
             - name: Upload html report to Github
               id: upload-github
               uses: actions/upload-artifact@v4.3.3
