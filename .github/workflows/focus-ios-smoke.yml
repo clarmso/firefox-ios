@@ -101,7 +101,7 @@ jobs:
             - name: Output markdown report to Github Actions job page
               id: github-actions-job
               run: |
-                xcresultparser -o md ${{ env.test_results_directory }}/results.xcresult | sed -e 's/<[^>]*>//g' -e 's/&nbsp;//g' >> $GITHUB_STEP_SUMMARY            
+                xcresultparser -o md ${{ env.test_results_directory }}/results.xcresult | sed -e 's/<[^>]*>//g' -e 's/&nbsp;//g' -e 's/Analizer/Analyzer/g' >> $GITHUB_STEP_SUMMARY            
             - name: Upload html report to Github
               id: upload-github
               uses: actions/upload-artifact@v4.3.3
