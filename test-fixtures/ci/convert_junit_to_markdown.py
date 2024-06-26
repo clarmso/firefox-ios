@@ -109,4 +109,4 @@ def convert_file(input_file, output_file):
         md_file.write(markdown)
 
 if __name__ == "__main__":
-    convert_file(sys.argv[1], "output.md")
+    convert_file(sys.argv[1], sys.argv[2])
