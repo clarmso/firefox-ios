@@ -1,4 +1,4 @@
-import sys
+import getopt, sys
 import xml.etree.ElementTree as ET
 
 # Modified from junit_to_markdown
@@ -68,6 +68,25 @@ def convert_to_markdown(test_suites):
         markdown += convert_test_cases_to_markdown(test_suite['test_cases'])
     return markdown
 
+def convert_to_markdown_failures_only(test_suites):
+    """
+    Converts test failure data into Markdown format
+    
+    Args:
+        test_suites (a dict): Test suite data.
+        
+    Returns:
+        str: A string in Markdown format.
+    """
+    markdown = ""
+    for test_suite in test_suites:
+        if int(test_suite['failures']):
+            markdown += "## {name}\n\n".format(name = test_suite['name'].replace('XCUITest.' ,''))
+            markdown += convert_test_cases_to_markdown_failures_only(test_suite['test_cases'])
+    if markdown == "":
+        markdown += "## 🎉 No test failures 🎉"
+    return markdown
+
 def convert_test_cases_to_markdown(test_cases):
     """
     Converts test case data into Markdown format using a table.
@@ -95,18 +114,47 @@ def convert_test_cases_to_markdown(test_cases):
     
     return markdown
 
-def convert_file(input_file, output_file):
+def convert_test_cases_to_markdown_failures_only(test_cases):
+    markdown = ""
+    markdown += "| Test Name | Time (s) | Status | Message |\n"
+    markdown += "|-----------|----------|--------|---------|\n"
+    
+    for case in test_cases:
+        message = case.get('message', '')
+        if message:
+            message = '`{message}`'.format(message = message)
+            markdown += "| {name} | {time} | {status} | {message} |\n".format(
+                name = case['name'],
+                time = case['time'],
+                status = case['status'],
+                message = message
+            )
+            markdown += "\n"
+    
+    return markdown
+        
+
+def convert_file(input_file, output_file, failures_only = False):
     """
     Converts a JUnit XML file to a Markdown file.
 
     Args:
         input_file (str): Path to the JUnit XML file.
         output_file (str): Path to the output Markdown file.
-    """
+    """ 
     test_cases = parse_junit_xml(input_file)
-    markdown = convert_to_markdown(test_cases)
+    markdown = ""
+    if failures_only:
+        markdown = convert_to_markdown_failures_only(test_cases)
+    else:
+        markdown = convert_to_markdown(test_cases)
     with open(output_file, 'w') as md_file:
         md_file.write(markdown)
 
 if __name__ == "__main__":
-    convert_file(sys.argv[1], sys.argv[2])
+    opts, args = getopt.getopt(sys.argv[1:], "f", ["failures-only"])
+    failures_only = False
+    for opt, arg in opts:
+        if opt == "-f" or opt == "--failures-only":
+            failures_only = True
+    convert_file(args[0], args[1], failures_only=failures_only)

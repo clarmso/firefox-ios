@@ -95,7 +95,7 @@ jobs:
             - name: Print test report
               id: test-report
               run: |
-                python ../test-fixtures/ci/convert_junit_to_markdown.py ./build/reports/junit.xml ./output.md
+                python ../test-fixtures/ci/convert_junit_to_markdown.py -f ./build/reports/junit.xml ./output.md
                 cat output.md >> $GITHUB_STEP_SUMMARY
               working-directory:  ${{ env.browser }}
             - name: Upload log file
