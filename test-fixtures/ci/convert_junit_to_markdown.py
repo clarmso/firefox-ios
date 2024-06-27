@@ -173,7 +173,6 @@ if __name__ == "__main__":
     opts, args = getopt.getopt(sys.argv[1:], "fgs", ["failures-only", "github", "slack"])
     failures_only = False
     github_markdown = True
-    print(opts)
     for opt, arg in opts:
         if opt == "-f" or opt == "--failures-only":
             failures_only = True
