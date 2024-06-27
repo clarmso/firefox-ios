@@ -8,7 +8,6 @@ env:
     xcode_version: 15.4
     ios_version: 17.5
     ios_simulator_default: iPhone 15
-    xcodebuild_test_plan: SmokeTest
     xcodebuild_scheme: Focus
     xcodebuild_target: XCUITest
     test_results_directory: /Users/runner/tmp
@@ -50,11 +49,7 @@ jobs:
                 retention-days: 2          
     run-tests:
         name: Run tests
-<<<<<<< HEAD
         runs-on: macos-14
-=======
-        runs-on: macos-14-large
->>>>>>> 768c097f2 (Bugfix MTE-2907 File extension for focus smoke test workflow (#20767))
         needs: compile
         strategy:
             fail-fast: false
@@ -68,12 +63,7 @@ jobs:
             - name: Install packages
               id: packages
               run: |
-<<<<<<< HEAD
                 gem install xcpretty
-=======
-                brew update
-                brew install xctesthtmlreport
->>>>>>> 768c097f2 (Bugfix MTE-2907 File extension for focus smoke test workflow (#20767))
             - name: Setup Xcode
               id: xcode
               run: |
@@ -97,7 +87,6 @@ jobs:
                     -target ${{ env.xcodebuild_target }} \
                     -derivedDataPath ~/DerivedData \
                     -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ env.ios_version }}' \
-<<<<<<< HEAD
                     -testPlan ${{ matrix.xcodebuild_test_plan }} \
                     -resultBundlePath ${{ env.test_results_directory }}/results \
                     | tee xcodebuild.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
@@ -117,22 +106,6 @@ jobs:
               with:
                 name: ${{ env.browser }}-${{ matrix.xcodebuild_test_plan }}-${{ matrix.ios_simulator }}-xcodebuildlog-${{ github.run_number }}
                 path: ${{ env.browser }}/xcodebuild.log
-=======
-                    -testPlan ${{ env.xcodebuild_test_plan }} \
-                    -resultBundlePath ${{ env.test_results_directory }}/results
-              working-directory:  ${{ env.browser }}
-              continue-on-error: true
-            - name: Prettyprint test report
-              id: test-report
-              run: |
-                xchtmlreport ${{ env.test_results_directory }}/results.xcresult
-            - name: Upload xcresult file to Github
-              id: upload-github
-              uses: actions/upload-artifact@v4.3.3
-              with:
-                name: ${{ env.browser }}-${{ env.xcodebuild_test_plan }}-${{ matrix.ios_simulator }}-${{ github.run_number }}
-                path: ${{ env.test_results_directory }}/index.html
->>>>>>> 768c097f2 (Bugfix MTE-2907 File extension for focus smoke test workflow (#20767))
                 retention-days: 90
             - name: Report to Slack
               id: slack
@@ -144,18 +117,12 @@ jobs:
                 SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
                 ios_simulator: ${{ matrix.ios_simulator }}
                 pass_fail:  ${{ steps.run-tests.outcome == 'success' && ':white_check_mark:' || ':x:' }}
-<<<<<<< HEAD
                 xcodebuild_test_plan: ${{ matrix.xcodebuild_test_plan }}
-=======
->>>>>>> 768c097f2 (Bugfix MTE-2907 File extension for focus smoke test workflow (#20767))
                 ref_name: ${{ github.ref_name }}
                 repository: ${{ github.repository }}
                 run_id: ${{ github.run_id }}
                 server_url: ${{ github.server_url }}
-<<<<<<< HEAD
                 list_of_failures: ${{ steps.run-tests.outputs.list_of_failures }}
-=======
->>>>>>> 768c097f2 (Bugfix MTE-2907 File extension for focus smoke test workflow (#20767))
             - name: Return fail status if a test fails
               run: |
                 exit ${{ steps.run-tests.outcome == 'success' && '0' || '1' }}
