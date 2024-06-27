@@ -106,7 +106,7 @@ def convert_test_cases_to_markdown(test_cases):
         message = ('`{message}`'.format(message = message) if message != '' else '')
         markdown += "| {name} | {time} | {status} | {message} |\n".format(
             name = case['name'],
-            time = case['time'],
+            time = case.get('time', ''),
             status = case['status'],
             message = message
         )
@@ -125,7 +125,7 @@ def convert_test_cases_to_markdown_failures_only(test_cases):
             message = '`{message}`'.format(message = message)
             markdown += "| {name} | {time} | {status} | {message} |\n".format(
                 name = case['name'],
-                time = case['time'],
+                time = case.get('time', ''),
                 status = case['status'],
                 message = message
             )
