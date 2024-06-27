@@ -68,6 +68,20 @@ def convert_to_github_markdown(test_suites):
         markdown += convert_test_cases_to_github_markdown(test_suite['test_cases'])
     return markdown
 
+def convert_to_slack_markdown(test_suites):
+    markdown = ""
+    for test_suite in test_suites:
+        if int(test_suite['failures']):
+            markdown += "*{test_suite_name}*".format(test_suite_name=test_suite['name'].replace('XCUITest.' ,''))
+            markdown += "```"
+            test_cases = test_suite['test_cases']
+            for test_case in test_cases:
+                markdown += "{test_case_name}\\n".format(test_case_name=test_case.get("name"))
+            markdown += "```"
+    if markdown == "":
+        markdown += "🎉 No test failures 🎉"
+    return markdown    
+
 def convert_to_github_markdown_failures_only(test_suites):
     """
     Converts test failure data into Markdown format
@@ -131,9 +145,8 @@ def convert_test_cases_to_github_markdown_failures_only(test_cases):
             markdown += "\n"
     
     return markdown
-        
 
-def convert_file(input_file, output_file, failures_only = False):
+def convert_file_github(input_file, output_file, failures_only = False):
     """
     Converts a JUnit XML file to a Markdown file.
 
@@ -150,10 +163,23 @@ def convert_file(input_file, output_file, failures_only = False):
     with open(output_file, 'w') as md_file:
         md_file.write(markdown)
 
+def convert_file_slack(input_file, output_file):
+    test_cases = parse_junit_xml(input_file)
+    markdown = convert_to_slack_markdown(test_cases)
+    with open(output_file, 'w') as md_file:
+        md_file.write(markdown)
+
 if __name__ == "__main__":
-    opts, args = getopt.getopt(sys.argv[1:], "f", ["failures-only"])
+    opts, args = getopt.getopt(sys.argv[1:], "fgs", ["failures-only", "github", "slack"])
     failures_only = False
+    github_markdown = True
+    print(opts)
     for opt, arg in opts:
         if opt == "-f" or opt == "--failures-only":
             failures_only = True
-    convert_file(args[0], args[1], failures_only=failures_only)
+        if opt == "-s" or opt == "--slack":
+            github_markdown = False
+    if github_markdown:
+        convert_file_github(args[0], args[1], failures_only=failures_only)
+    else:
+        convert_file_slack(args[0], args[1])
