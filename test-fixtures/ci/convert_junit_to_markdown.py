@@ -20,17 +20,17 @@ def parse_junit_xml(file_path):
     
     for testsuite in root.iter('testsuite'):
         suite = {
-            'name': testsuite.get('name'),
-            'tests': testsuite.get('tests'),
-            'failures': testsuite.get('failures'),
+            'name': testsuite.get('name', ''),
+            'tests': testsuite.get('tests', ''),
+            'failures': testsuite.get('failures', ''),
             'test_cases': []
         }
         
         for testcase in testsuite.iter('testcase'):
             case = {
-                'name': testcase.get('name'),
-                'classname': testcase.get('classname'),
-                'time': testcase.get('time'),
+                'name': testcase.get('name', ''),
+                'classname': testcase.get('classname', ''),
+                'time': testcase.get('time', ''),
                 'status': '✅'
             }
 
@@ -38,10 +38,10 @@ def parse_junit_xml(file_path):
             error = testcase.find('error')
             if failure is not None:
                 case['status'] = '❌'
-                case['message'] = failure.get('message')
-            elif error is not None:
+                case['message'] = failure.get('message','')
+            if error is not None:
                 case['status'] = '⚠️'
-                case['message'] = error.get('message')
+                case['message'] = error.get('message', '')
 
             suite['test_cases'].append(case)
             
@@ -120,11 +120,11 @@ def convert_test_cases_to_markdown_failures_only(test_cases):
     markdown += "|-----------|----------|--------|---------|\n"
     
     for case in test_cases:
-        message = case.get('message', '')
-        if message:
-            message = '```{message}```'.format(message = message)
+        if not case.get('status') == '✅':
+            message = case.get('message', '')
+            message = message = ('```{message}```'.format(message = message) if message != '' else '')
             markdown += "| {name} | {time} | {status} | {message} |".format(
-                name = case['name'],
+                name = case.get('name', ''),
                 time = case.get('time', ''),
                 status = case['status'],
                 message = message
