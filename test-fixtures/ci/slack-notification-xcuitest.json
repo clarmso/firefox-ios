@@ -19,6 +19,13 @@
         }
       },
       {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "${{ env.list_of_failures }}"
+        }
+      },
+      {
         "type":"divider"
       },
       {
