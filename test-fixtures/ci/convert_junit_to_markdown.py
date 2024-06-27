@@ -49,7 +49,7 @@ def parse_junit_xml(file_path):
 
     return test_suites
 
-def convert_to_markdown(test_suites):
+def convert_to_github_markdown(test_suites):
     """
     Converts a test suite data into Markdown format with the suite's name as heading
     
@@ -65,10 +65,10 @@ def convert_to_markdown(test_suites):
         markdown += "## {name}\n\n".format(name = test_suite['name'].replace('XCUITest.' ,''))
         markdown += "* Number of tests: {tests}\n".format(tests = test_suite['tests'])
         markdown += "* Number of failures: {failures}\n\n".format(failures = test_suite['failures'])
-        markdown += convert_test_cases_to_markdown(test_suite['test_cases'])
+        markdown += convert_test_cases_to_github_markdown(test_suite['test_cases'])
     return markdown
 
-def convert_to_markdown_failures_only(test_suites):
+def convert_to_github_markdown_failures_only(test_suites):
     """
     Converts test failure data into Markdown format
     
@@ -82,12 +82,12 @@ def convert_to_markdown_failures_only(test_suites):
     for test_suite in test_suites:
         if int(test_suite['failures']):
             markdown += "## {name}\n\n".format(name = test_suite['name'].replace('XCUITest.' ,''))
-            markdown += convert_test_cases_to_markdown_failures_only(test_suite['test_cases'])
+            markdown += convert_test_cases_to_github_markdown_failures_only(test_suite['test_cases'])
     if markdown == "":
         markdown += "## 🎉 No test failures 🎉"
     return markdown
 
-def convert_test_cases_to_markdown(test_cases):
+def convert_test_cases_to_github_markdown(test_cases):
     """
     Converts test case data into Markdown format using a table.
 
@@ -114,18 +114,17 @@ def convert_test_cases_to_markdown(test_cases):
     
     return markdown
 
-def convert_test_cases_to_markdown_failures_only(test_cases):
+def convert_test_cases_to_github_markdown_failures_only(test_cases):
     markdown = ""
-    markdown += "| Test Name | Time (s) | Status | Message |\n"
-    markdown += "|-----------|----------|--------|---------|\n"
+    markdown += "| Test Name | Status | Message |\n"
+    markdown += "|-----------|--------|---------|\n"
     
     for case in test_cases:
         if not case.get('status') == '✅':
             message = case.get('message', '')
             message = message = ('```{message}```'.format(message = message) if message != '' else '')
-            markdown += "| {name} | {time} | {status} | {message} |".format(
+            markdown += "| {name} | {status} | {message} |".format(
                 name = case.get('name', ''),
-                time = case.get('time', ''),
                 status = case['status'],
                 message = message
             )
@@ -145,9 +144,9 @@ def convert_file(input_file, output_file, failures_only = False):
     test_cases = parse_junit_xml(input_file)
     markdown = ""
     if failures_only:
-        markdown = convert_to_markdown_failures_only(test_cases)
+        markdown = convert_to_github_markdown_failures_only(test_cases)
     else:
-        markdown = convert_to_markdown(test_cases)
+        markdown = convert_to_github_markdown(test_cases)
     with open(output_file, 'w') as md_file:
         md_file.write(markdown)
 
