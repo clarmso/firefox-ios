@@ -102,7 +102,7 @@ jobs:
               id: upload-log
               uses: actions/upload-artifact@v4.3.3
               with:
-                name: ${{ env.browser }}-${{ matrix.xcodebuild_test_plan }}-${{ matrix.ios_simulator }}-${{ github.run_number }}
+                name: ${{ env.browser }}-${{ matrix.xcodebuild_test_plan }}-${{ matrix.ios_simulator }}-xcodebuildlog-${{ github.run_number }}
                 path: ${{ env.browser }}/xcodebuild.log
                 retention-days: 90
             - name: Report to Slack
