@@ -50,15 +50,6 @@ def parse_junit_xml(file_path):
     return test_suites
 
 def convert_to_github_markdown(test_suites):
-    """
-    Converts a test suite data into Markdown format with the suite's name as heading
-    
-    Args:
-        test_suites (a dict): Test suite data.
-        
-    Returns:
-        str: A string in Markdown format.
-    """
     markdown = "# Test Results\n\n"
 
     for test_suite in test_suites:
@@ -72,7 +63,7 @@ def convert_to_slack_markdown(test_suites):
     markdown = ""
     for test_suite in test_suites:
         if int(test_suite['failures']):
-            markdown += "*{test_suite_name}*".format(test_suite_name=test_suite['name'].replace('XCUITest.' ,''))
+            markdown += "{test_suite_name}".format(test_suite_name=test_suite['name'].replace('XCUITest.' ,''))
             markdown += "```"
             test_cases = test_suite['test_cases']
             for test_case in test_cases:
@@ -83,15 +74,6 @@ def convert_to_slack_markdown(test_suites):
     return markdown    
 
 def convert_to_github_markdown_failures_only(test_suites):
-    """
-    Converts test failure data into Markdown format
-    
-    Args:
-        test_suites (a dict): Test suite data.
-        
-    Returns:
-        str: A string in Markdown format.
-    """
     markdown = ""
     for test_suite in test_suites:
         if int(test_suite['failures']):
@@ -102,15 +84,6 @@ def convert_to_github_markdown_failures_only(test_suites):
     return markdown
 
 def convert_test_cases_to_github_markdown(test_cases):
-    """
-    Converts test case data into Markdown format using a table.
-
-    Args:
-        test_cases (list of dict): List of test case data from a test suite
-
-    Returns:
-        str: A string in Markdown format.
-    """
     markdown = ""
     markdown += "| Test Name | Time (s) | Status | Message |\n"
     markdown += "|-----------|----------|--------|---------|\n"
@@ -147,13 +120,6 @@ def convert_test_cases_to_github_markdown_failures_only(test_cases):
     return markdown
 
 def convert_file_github(input_file, output_file, failures_only = False):
-    """
-    Converts a JUnit XML file to a Markdown file.
-
-    Args:
-        input_file (str): Path to the JUnit XML file.
-        output_file (str): Path to the output Markdown file.
-    """ 
     test_cases = parse_junit_xml(input_file)
     markdown = ""
     if failures_only:
