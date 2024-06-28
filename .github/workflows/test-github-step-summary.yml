@@ -28,6 +28,16 @@ jobs:
                 xcodebuild_test_plan: ['SmokeTest', 'FullFunctionalTests']
                 ios_simulator: [ 'iPhone 15', 'iPad Pro (12.9-inch) (6th generation)']
         steps:
+            - name: Set some variables
+              id: set-some-variables
+              run: |
+                echo "list_of_failures=hello">> $GITHUB_OUTPUT
+            - name: Get some variables
+              id: get-some-variables
+              run: |
+                echo ${{ env.list_of_failures }}
+              env:
+                list_of_failures: ${{ steps.set-some-variables.outputs.list_of_failures }}
             - name: Dummy test report
               run: |
                 echo "## ${{ matrix.xcodebuild_test_plan }} ${{matrix.ios_simulator}}" >> $GITHUB_STEP_SUMMARY
