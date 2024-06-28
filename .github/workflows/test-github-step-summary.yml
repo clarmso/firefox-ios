@@ -32,6 +32,7 @@ jobs:
               id: set-some-variables
               run: |
                 echo "list_of_failures=`ls`">> $GITHUB_OUTPUT
+                cat $GITHUB_OUTPUT
             - name: Get some variables
               id: get-some-variables
               run: |
