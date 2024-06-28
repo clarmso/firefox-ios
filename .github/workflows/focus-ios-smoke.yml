@@ -124,7 +124,7 @@ jobs:
                 repository: ${{ github.repository }}
                 run_id: ${{ github.run_id }}
                 server_url: ${{ github.server_url }}
-                list_of_failures: ${{ steps.run-tests.outputs.list_of_failures }}
+                list_of_failures: ${{ steps.test-report.outputs.list_of_failures }}
             - name: Return fail status if a test fails
               run: |
                 exit ${{ steps.run-tests.outcome == 'success' && '0' || '1' }}
