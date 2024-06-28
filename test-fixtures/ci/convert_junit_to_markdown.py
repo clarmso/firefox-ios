@@ -40,7 +40,7 @@ def parse_junit_xml(file_path):
                 case['status'] = '❌'
                 case['message'] = failure.get('message','')
             if error is not None:
-                case['status'] = '⚠️'
+                case['status'] = '🛑'
                 case['message'] = error.get('message', '')
 
             suite['test_cases'].append(case)
@@ -49,11 +49,18 @@ def parse_junit_xml(file_path):
 
     return test_suites
 
+def count_test_retry_failure(test_name, test_cases):
+    count = 0
+    for test_case in test_cases:
+        if test_case.get('name', '') == test_name and not test_case.get('status') == '✅':
+            count += 1
+    return count
+
 def convert_to_github_markdown(test_suites):
     markdown = "# Test Results\n\n"
 
     for test_suite in test_suites:
-        markdown += "## {name}\n\n".format(name = test_suite['name'].replace('XCUITest.' ,''))
+        markdown += "## {name}\n\n".format(name = test_suite.get('name', '').replace('XCUITest.' ,''))
         markdown += "* Number of tests: {tests}\n".format(tests = test_suite['tests'])
         markdown += "* Number of failures: {failures}\n\n".format(failures = test_suite['failures'])
         markdown += convert_test_cases_to_github_markdown(test_suite['test_cases'])
@@ -62,25 +69,36 @@ def convert_to_github_markdown(test_suites):
 def convert_to_slack_markdown(test_suites):
     markdown = ""
     for test_suite in test_suites:
-        if int(test_suite['failures']):
-            markdown += "{test_suite_name}\\n".format(test_suite_name=test_suite['name'].replace('XCUITest.' ,''))
+        if int(test_suite.get('failures')):
+            markdown += "{test_suite_name}\\n".format(test_suite_name = test_suite.get('name', '').replace('XCUITest.' ,''))
             markdown += "```\\n"
-            test_cases = test_suite['test_cases']
+            test_cases = test_suite.get('test_cases', [])
+            done = []
             for test_case in test_cases:
-                markdown += "{test_case_name}\\n".format(test_case_name=test_case.get("name"))
-            markdown += "```\\n"
+                if not test_case.get('status') == '✅' and not test_case.get('name','') in done:
+                    fail_count = count_test_retry_failure(test_case.get('name', ''), test_cases)
+                    # flaky test?
+                    if fail_count < 3:
+                        test_case['status'] = '⚠️'
+                    markdown += "{status} {test_case_name}\\n".format(test_case_name=test_case.get("name"), status=test_case.get('status'))
+                    done.append(test_case.get('name', ''))
+                    markdown += "```\\n"
     if markdown == "":
         markdown += "🎉 No test failures 🎉"
+    else:
+        markdown += "\n\n⚠️-Flaky ❌-Failed"
     return markdown    
 
 def convert_to_github_markdown_failures_only(test_suites):
     markdown = ""
     for test_suite in test_suites:
         if int(test_suite['failures']):
-            markdown += "## {name}\n\n".format(name = test_suite['name'].replace('XCUITest.' ,''))
-            markdown += convert_test_cases_to_github_markdown_failures_only(test_suite['test_cases'])
+            markdown += "## {name}\n\n".format(name = test_suite.get('name', '').replace('XCUITest.' ,''))
+            markdown += convert_test_cases_to_github_markdown_failures_only(test_suite.get('test_cases', []))
     if markdown == "":
         markdown += "## 🎉 No test failures 🎉"
+    else:
+        markdown += "\n\n⚠️-Flaky ❌-Failed"
     return markdown
 
 def convert_test_cases_to_github_markdown(test_cases):
@@ -88,13 +106,13 @@ def convert_test_cases_to_github_markdown(test_cases):
     markdown += "| Test Name | Time (s) | Status | Message |\n"
     markdown += "|-----------|----------|--------|---------|\n"
 
-    for case in test_cases:
-        message = case.get('message', '')
+    for test_case in test_cases:
+        message = test_case.get('message', '')
         message = ('```{message}```'.format(message = message) if message != '' else '')
         markdown += "| {name} | {time} | {status} | {message} |\n".format(
-            name = case['name'],
-            time = case.get('time', ''),
-            status = case['status'],
+            name = test_case.get('name', ''),
+            time = test_case.get('time', ''),
+            status = test_case.get('status'),
             message = message
         )
     markdown += "\n"
@@ -106,15 +124,22 @@ def convert_test_cases_to_github_markdown_failures_only(test_cases):
     markdown += "| Test Name | Status | Message |\n"
     markdown += "|-----------|--------|---------|\n"
     
-    for case in test_cases:
-        if not case.get('status') == '✅':
-            message = case.get('message', '')
+    done = []
+    
+    for test_case in test_cases:
+        if not test_case.get('status') == '✅' and not test_case.get('name', '') in done:
+            fail_count = count_test_retry_failure(test_case.get('name'), test_cases)
+            # flaky test?
+            if fail_count < 3:
+                test_case['status'] = '⚠️'
+            message = test_case.get('message', '')
             message = message = ('```{message}```'.format(message = message) if message != '' else '')
             markdown += "| {name} | {status} | {message} |".format(
-                name = case.get('name', ''),
-                status = case['status'],
+                name = test_case.get('name', ''),
+                status = test_case.get('status'),
                 message = message
             )
+            done.append(test_case.get('name'))
             markdown += "\n"
     
     return markdown
