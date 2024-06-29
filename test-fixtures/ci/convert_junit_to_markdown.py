@@ -71,7 +71,6 @@ def convert_to_slack_markdown(test_suites):
     for test_suite in test_suites:
         if int(test_suite.get('failures')):
             markdown += "{test_suite_name}\\n".format(test_suite_name = test_suite.get('name', '').replace('XCUITest.' ,''))
-            markdown += "```\\n"
             test_cases = test_suite.get('test_cases', [])
             done = []
             for test_case in test_cases:
@@ -79,10 +78,9 @@ def convert_to_slack_markdown(test_suites):
                     fail_count = count_test_retry_failure(test_case.get('name', ''), test_cases)
                     # flaky test?
                     if fail_count < 3:
-                        test_case['status'] = '⚠️'
-                    markdown += "{status} {test_case_name}\\n".format(test_case_name=test_case.get("name"), status=test_case.get('status'))
+                        test_case['status'] = ':warning:'
+                    markdown += "{status} `{test_case_name}`\\n".format(test_case_name=test_case.get("name"), status=test_case.get('status'))
                     done.append(test_case.get('name', ''))
-                    markdown += "```\\n"
     if markdown == "":
         markdown += "🎉 No test failures 🎉"
     else:
