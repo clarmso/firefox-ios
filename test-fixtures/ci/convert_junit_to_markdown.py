@@ -91,7 +91,7 @@ def convert_to_github_markdown(test_suites, is_smoke = True):
     if markdown == "":
         markdown += "## 🎉 No test failures 🎉"
     else:
-        markdown = "(:warning:-flaky :x:-Failed)\n" + markdown
+        markdown = "(:warning:-flaky :x:-Failed)\\n" + markdown
     
     return markdown
 
