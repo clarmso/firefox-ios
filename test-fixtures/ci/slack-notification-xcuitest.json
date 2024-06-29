@@ -22,7 +22,7 @@
         "type": "section",
         "text": {
           "type": "mrkdwn",
-          "text": "*Failed Tests*\n${{ env.list_of_failures }}"
+          "text": "*Failed Tests* (:warning:-flaky :x:-Failed)\n${{ env.list_of_failures }}"
         }
       },
       {

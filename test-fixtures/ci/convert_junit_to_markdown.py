@@ -83,8 +83,7 @@ def convert_to_slack_markdown(test_suites):
                     done.append(test_case.get('name', ''))
     if markdown == "":
         markdown += "🎉 No test failures 🎉"
-    else:
-        markdown += "\\n⚠️-Flaky ❌-Failed"
+
     return markdown    
 
 def convert_to_github_markdown_failures_only(test_suites):
