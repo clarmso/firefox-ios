@@ -53,10 +53,14 @@ jobs:
       - name: Print classification result
         if: steps.classify.conclusion == 'success'
         run: |
+          RESPONSE='${{ steps.classify.outputs.response }}'
+          CLASSIFICATION=$(echo "$RESPONSE" | jq -r '.classification')
+          CONFIDENCE=$(echo "$RESPONSE" | jq -r '.confidence')
+          REASON=$(echo "$RESPONSE" | jq -r '.reason')
           echo "## Classification Result" >> $GITHUB_STEP_SUMMARY
-          echo '```json' >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.classify.outputs.response }}" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "- **Classification**: $CLASSIFICATION" >> $GITHUB_STEP_SUMMARY
+          echo "- **Confidence**: $CONFIDENCE" >> $GITHUB_STEP_SUMMARY
+          echo "- **Reason**: $REASON" >> $GITHUB_STEP_SUMMARY
 
       - name: Label as spam
         if: steps.classify.conclusion == 'success' && fromJson(steps.classify.outputs.response).classification == 'spam'
